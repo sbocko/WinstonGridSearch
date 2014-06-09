@@ -29,8 +29,8 @@ public class CSV2ArffConverter {
             saver.setFile(arffOutput);
             saver.setDestination(arffOutput);
             saver.writeBatch();
-        } catch (IOException e){
-            e.printStackTrace();
+        } catch (IOException|NullPointerException e){
+//            e.printStackTrace();
             return false;
         }
         return true;

@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Created by stefan on 6/8/14.
  */
-public class KNN {
+public class KnnModel {
 
     public static final int ERROR_DURING_CLASSIFICATION = -1;
     private static final int MAX_K = 100;
@@ -34,7 +34,6 @@ public class KNN {
 //            e.printStackTrace();
             return ERROR_DURING_CLASSIFICATION;
         }
-        System.out.println(evaluation.rootMeanSquaredError());
         return evaluation.rootMeanSquaredError();
     }
 
@@ -46,7 +45,7 @@ public class KNN {
      */
     public Set<SearchResult> knnSearch(Instances dataInstances){
         Set<SearchResult> results = new HashSet<>();
-        for (int k = 1; k < MAX_K; k++) {
+        for (int k = 1; k <= MAX_K; k++) {
             double rmse = knn(dataInstances,k);
             if(rmse != ERROR_DURING_CLASSIFICATION) {
                 SearchResult res = new KnnSearchResult(dataInstances.relationName(), rmse, k);
