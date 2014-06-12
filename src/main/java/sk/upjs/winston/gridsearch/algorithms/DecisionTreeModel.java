@@ -21,14 +21,14 @@ public class DecisionTreeModel extends Model {
     public static final int MIN_NUMBER_OF_INSTANCES_PER_LEAF_MAX_SEARCH_VALUE = 1000;
 
     /*
-             * Performes kNN algorithm and evaluates results 10 times with 10-fold cross validation method.
-             * Returnes the mean squared error for given model.
-             * @param dataInstances dataset instances
-             * @param m minimum number of instances per leaf parameter of J48 algorithm
-             * @param c pruning confidence parameter of J48 algorithm
-             * @param unpruned whether tree should be unpruned or not
-             * @return root mean squared error
-             */
+     * Performes kNN algorithm and evaluates results 10 times with 10-fold cross validation method.
+     * Returnes the mean squared error for given model.
+     * @param dataInstances dataset instances
+     * @param m minimum number of instances per leaf parameter of J48 algorithm
+     * @param c pruning confidence parameter of J48 algorithm
+     * @param unpruned whether tree should be unpruned or not
+     * @return root mean squared error
+     */
     public double j48DecisionTreeAnalysis(Instances dataInstances, int m, float c, boolean unpruned) {
         J48 j48 = new J48();
         j48.setMinNumObj(m);
@@ -54,7 +54,7 @@ public class DecisionTreeModel extends Model {
      * @param dataInstances dataset instances
      * @return Set of DecisionTreeSearchResult instances
      */
-    public Set<SearchResult> knnSearch(Instances dataInstances) {
+    public Set<SearchResult> j48Search(Instances dataInstances) {
         Set<SearchResult> results = new HashSet<>();
 
         for (float c = PRUNING_CONFIDENCE_MIN; c <= PRUNING_CONFIDENCE_MAX; c += PRUNING_CONFIDENCE_STEP) {

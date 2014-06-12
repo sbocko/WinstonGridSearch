@@ -9,12 +9,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Set;
 
-public class KnnModelTest extends TestCase {
+public class DecisionTreeModelTest extends TestCase {
 
-    private static final double IRIS_3KNN_RMSE = 0.17026766863246218;
+    private static final double J48_ALGORITHM_M1_C025_UNPRUNED_RMSE = 0.18802107625446746;
 
     @Test
-    public void testKnnSuccess() throws Exception {
+    public void testJ48DecisionTreeAnalysisSuccess() throws Exception {
         File dataFile = new File("other/iris.arff");
 
         BufferedReader reader = null;
@@ -26,9 +26,9 @@ public class KnnModelTest extends TestCase {
             // setting class attribute
             dataInstances.setClassIndex(dataInstances.numAttributes() - 1);
 
-            KnnModel knnModel = new KnnModel();
-            double rmse = knnModel.knn(dataInstances, 3);
-            assertEquals(rmse, IRIS_3KNN_RMSE);
+            DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
+            double rmse = decisionTreeModel.j48DecisionTreeAnalysis(dataInstances, 1, (float) 0.25, false);
+            assertEquals(rmse, J48_ALGORITHM_M1_C025_UNPRUNED_RMSE);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -36,14 +36,14 @@ public class KnnModelTest extends TestCase {
     }
 
     @Test
-    public void testKnnNullInstances() throws Exception {
-        KnnModel knnModel = new KnnModel();
-        double rmse = knnModel.knn(null, 3);
+    public void testJ48DecisionTreeAnalysisNullInstances() throws Exception {
+        DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
+        double rmse = decisionTreeModel.j48DecisionTreeAnalysis(null, 1, (float) 0.25, false);
         assertEquals(rmse, (double) Model.ERROR_DURING_CLASSIFICATION);
     }
 
     @Test
-    public void testKnnNegativeKParameter() throws Exception {
+    public void testJ48DecisionTreeAnalysisNegativeCParameter() throws Exception {
         File dataFile = new File("other/iris.arff");
 
         BufferedReader reader = null;
@@ -55,8 +55,8 @@ public class KnnModelTest extends TestCase {
             // setting class attribute
             dataInstances.setClassIndex(dataInstances.numAttributes() - 1);
 
-            KnnModel knnModel = new KnnModel();
-            double rmse = knnModel.knn(dataInstances, -5);
+            DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
+            double rmse = decisionTreeModel.j48DecisionTreeAnalysis(dataInstances, 1, (float) -0.25, false);
             assertEquals(rmse, (double) Model.ERROR_DURING_CLASSIFICATION);
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,13 +76,13 @@ public class KnnModelTest extends TestCase {
             // setting class attribute
             dataInstances.setClassIndex(dataInstances.numAttributes() - 1);
 
-            KnnModel knnModel = new KnnModel();
-            Set<SearchResult> searchResults = knnModel.knnSearch(dataInstances);
-            assertEquals(searchResults.size(), KnnModel.MAX_K);
+            DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
+            Set<SearchResult> searchResults = decisionTreeModel.j48Search(dataInstances);
+            assertNotSame(searchResults.size(), 0);
 
             for (SearchResult result : searchResults) {
                 assertEquals(result.getDatasetName(), dataInstances.relationName());
-                assertEquals(result.getClass(), KnnSearchResult.class);
+                assertEquals(result.getClass(), DecisionTreeSearchResult.class);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -91,9 +91,9 @@ public class KnnModelTest extends TestCase {
     }
 
     @Test
-    public void testKnnSearchNull() throws Exception {
-        KnnModel knnModel = new KnnModel();
-        Set<SearchResult> searchResults = knnModel.knnSearch(null);
+    public void testJ48SearchNull() throws Exception {
+        DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
+        Set<SearchResult> searchResults = decisionTreeModel.j48Search(null);
         assertEquals(searchResults.size(), 0);
     }
 }
