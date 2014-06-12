@@ -78,7 +78,7 @@ public class KnnModelTest extends TestCase {
 
             KnnModel knnModel = new KnnModel();
             Set<SearchResult> searchResults = knnModel.knnSearch(dataInstances);
-            assertEquals(searchResults.size(), 100);
+            assertEquals(searchResults.size(), KnnModel.MAX_K);
 
             for (SearchResult result : searchResults) {
                 assertEquals(result.getDatasetName(), dataInstances.relationName());

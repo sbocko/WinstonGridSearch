@@ -2,7 +2,6 @@ package sk.upjs.winston.gridsearch.algorithms;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.lazy.IBk;
-import weka.core.Instance;
 import weka.core.Instances;
 
 import java.util.HashSet;
@@ -10,12 +9,11 @@ import java.util.Random;
 import java.util.Set;
 
 /**
+ * Class for performing knn analysis of datasets.
  * Created by stefan on 6/8/14.
  */
-public class KnnModel {
-
-    public static final int ERROR_DURING_CLASSIFICATION = -1;
-    private static final int MAX_K = 100;
+public class KnnModel extends Model{
+    public static final int MAX_K = 100;
 
     /*
      * Performes kNN algorithm and evaluates results 10 times with 10-fold cross validation method.
