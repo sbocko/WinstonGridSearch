@@ -9,12 +9,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Set;
 
-public class DecisionTreeModelTest extends TestCase {
+public class LogisticRegressionModelTest extends TestCase {
 
-    private static final double J48_ALGORITHM_M1_C025_UNPRUNED_RMSE = 0.18802107625446746;
+    private static final double LOGISTIC_REGRESSION_ALGORITHM_R1_MINF_RMSE = 0.14243190834235903;
 
     @Test
-    public void testJ48DecisionTreeAnalysisSuccess() {
+    public void testLogisticRegressionSuccess() throws Exception {
         File dataFile = new File("other/iris.arff");
 
         BufferedReader reader = null;
@@ -26,9 +26,9 @@ public class DecisionTreeModelTest extends TestCase {
             // setting class attribute
             dataInstances.setClassIndex(dataInstances.numAttributes() - 1);
 
-            DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
-            double rmse = decisionTreeModel.j48DecisionTreeAnalysis(dataInstances, 1, (float) 0.25, false);
-            assertEquals(rmse, J48_ALGORITHM_M1_C025_UNPRUNED_RMSE);
+            LogisticRegressionModel logisticRegressionModel = new LogisticRegressionModel();
+            double rmse = logisticRegressionModel.logisticRegression(dataInstances, 0, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
+            assertEquals(rmse, LOGISTIC_REGRESSION_ALGORITHM_R1_MINF_RMSE);
         } catch (Exception e) {
             e.printStackTrace();
             fail();
@@ -36,15 +36,15 @@ public class DecisionTreeModelTest extends TestCase {
     }
 
     @Test
-    public void testJ48DecisionTreeAnalysisNullInstances() {
-        DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
-        double rmse = decisionTreeModel.j48DecisionTreeAnalysis(null, 1, (float) 0.25, false);
+    public void testLogisticRegressionNullInstances() {
+        LogisticRegressionModel logisticRegressionModel = new LogisticRegressionModel();
+        double rmse = logisticRegressionModel.logisticRegression(null, 0, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
         assertEquals(rmse, (double) Model.ERROR_DURING_CLASSIFICATION);
     }
 
     @Test
-    public void testJ48DecisionTreeAnalysisNegativeCParameter() {
-        File dataFile = new File("other/iris.arff");
+    public void testLogisticRegressionWrongClassificationAttributeType() {
+        File dataFile = new File("other/dataset.arff");
 
         BufferedReader reader = null;
         try {
@@ -55,8 +55,8 @@ public class DecisionTreeModelTest extends TestCase {
             // setting class attribute
             dataInstances.setClassIndex(dataInstances.numAttributes() - 1);
 
-            DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
-            double rmse = decisionTreeModel.j48DecisionTreeAnalysis(dataInstances, 1, (float) -0.25, false);
+            LogisticRegressionModel logisticRegressionModel = new LogisticRegressionModel();
+            double rmse = logisticRegressionModel.logisticRegression(dataInstances, 0, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
             assertEquals(rmse, (double) Model.ERROR_DURING_CLASSIFICATION);
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,7 +65,14 @@ public class DecisionTreeModelTest extends TestCase {
     }
 
     @Test
-    public void testKnnSearchSuccess() {
+    public void testlogisticRegressionSearchNull() throws Exception {
+        LogisticRegressionModel logisticRegressionModel = new LogisticRegressionModel();
+        Set<SearchResult> searchResults = logisticRegressionModel.logisticRegressionSearch(null);
+        assertEquals(searchResults.size(), 0);
+    }
+
+    @Test
+    public void testlogisticRegressionSearchSuccess() throws Exception {
         File dataFile = new File("other/iris.arff");
         BufferedReader reader = null;
         try {
@@ -76,13 +83,14 @@ public class DecisionTreeModelTest extends TestCase {
             // setting class attribute
             dataInstances.setClassIndex(dataInstances.numAttributes() - 1);
 
-            DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
-            Set<SearchResult> searchResults = decisionTreeModel.j48Search(dataInstances);
+            LogisticRegressionModel logisticRegressionModel = new LogisticRegressionModel();
+            Set<SearchResult> searchResults = logisticRegressionModel.logisticRegressionSearch(dataInstances);
             assertNotSame(searchResults.size(), 0);
 
             for (SearchResult result : searchResults) {
                 assertEquals(result.getDatasetName(), dataInstances.relationName());
-                assertEquals(result.getClass(), DecisionTreeSearchResult.class);
+                assertEquals(((LogisticRegressionSearchResult) result).getMaximumNumberOfIterations(), LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
+                assertEquals(result.getClass(), LogisticRegressionSearchResult.class);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,10 +98,5 @@ public class DecisionTreeModelTest extends TestCase {
         }
     }
 
-    @Test
-    public void testJ48SearchNull() {
-        DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
-        Set<SearchResult> searchResults = decisionTreeModel.j48Search(null);
-        assertEquals(searchResults.size(), 0);
-    }
+
 }

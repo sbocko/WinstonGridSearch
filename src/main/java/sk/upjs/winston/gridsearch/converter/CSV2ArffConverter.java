@@ -5,7 +5,6 @@ import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class CSV2ArffConverter {
@@ -30,7 +29,7 @@ public class CSV2ArffConverter {
             saver.setDestination(arffOutput);
             saver.writeBatch();
         } catch (IOException|NullPointerException e){
-//            e.printStackTrace();
+            e.printStackTrace();
             return false;
         }
         return true;
