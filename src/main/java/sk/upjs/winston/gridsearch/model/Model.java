@@ -1,4 +1,4 @@
-package sk.upjs.winston.gridsearch.algorithms;
+package sk.upjs.winston.gridsearch.model;
 
 /**
  * Abstract class for different classification models.

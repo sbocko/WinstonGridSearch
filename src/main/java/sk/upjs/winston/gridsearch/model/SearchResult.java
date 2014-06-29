@@ -1,23 +1,23 @@
-package sk.upjs.winston.gridsearch.algorithms;
+package sk.upjs.winston.gridsearch.model;
 
 /**
  * This class is supposed to be subclassed to represent the results of modelling.
  * For given models a subclass of this class should own its hyperparameter values
- * and root mean squared error {rmse} for given {datasetName} using these hyperparameters.
+ * and root mean squared error {rmse} for given dataset using these hyperparameters.
  * Created by stefan on 6/8/14.
  */
 public abstract class SearchResult implements Comparable<SearchResult>{
-    private String datasetName;
+    private Dataset dataset;
 //    root mean squared error
     private double rmse;
 
 
-    public String getDatasetName() {
-        return datasetName;
+    public Dataset getDataset() {
+        return dataset;
     }
 
-    public void setDatasetName(String datasetName) {
-        this.datasetName = datasetName;
+    public void setDataset(Dataset dataset) {
+        this.dataset = dataset;
     }
 
     public double getRmse() {

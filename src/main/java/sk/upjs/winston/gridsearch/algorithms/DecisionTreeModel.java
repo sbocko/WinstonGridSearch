@@ -1,5 +1,9 @@
 package sk.upjs.winston.gridsearch.algorithms;
 
+import sk.upjs.winston.gridsearch.model.Dataset;
+import sk.upjs.winston.gridsearch.model.DecisionTreeSearchResult;
+import sk.upjs.winston.gridsearch.model.Model;
+import sk.upjs.winston.gridsearch.model.SearchResult;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
@@ -13,7 +17,6 @@ import java.util.Set;
  * Created by stefan on 6/12/14.
  */
 public class DecisionTreeModel extends Model {
-
     public static final double PRUNING_CONFIDENCE_STEP = 0.05;
     public static final double PRUNING_CONFIDENCE_MAX = 0.5;
     public static final int PRUNING_CONFIDENCE_MIN = 0;
@@ -51,10 +54,11 @@ public class DecisionTreeModel extends Model {
      * m=0,1,2,3,4,5..1000 with step of 5 from values bigger than 5
      * for both, unpruned and pruned trees.
      * When something goes wrong during search, the result of this search is not included in result set.
+     * @param dataset dataset details which belongs to returned search result
      * @param dataInstances dataset instances
      * @return Set of DecisionTreeSearchResult instances
      */
-    public Set<SearchResult> j48Search(Instances dataInstances) {
+    public Set<SearchResult> j48Search(Dataset dataset, Instances dataInstances) {
         Set<SearchResult> results = new HashSet<>();
 
         for (float c = PRUNING_CONFIDENCE_MIN; c <= PRUNING_CONFIDENCE_MAX; c += PRUNING_CONFIDENCE_STEP) {
@@ -67,7 +71,7 @@ public class DecisionTreeModel extends Model {
                     rmse = j48DecisionTreeAnalysis(dataInstances, m, c, unpruned);
 
                     if (rmse != ERROR_DURING_CLASSIFICATION) {
-                        SearchResult res = new DecisionTreeSearchResult(dataInstances.relationName(), rmse, c, m, unpruned);
+                        SearchResult res = new DecisionTreeSearchResult(dataset, rmse, c, m, unpruned);
                         results.add(res);
                     }
                 }

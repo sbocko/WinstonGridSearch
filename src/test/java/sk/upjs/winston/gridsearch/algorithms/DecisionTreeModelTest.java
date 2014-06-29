@@ -2,6 +2,10 @@ package sk.upjs.winston.gridsearch.algorithms;
 
 import junit.framework.TestCase;
 import org.junit.Test;
+import sk.upjs.winston.gridsearch.model.Dataset;
+import sk.upjs.winston.gridsearch.model.DecisionTreeSearchResult;
+import sk.upjs.winston.gridsearch.model.Model;
+import sk.upjs.winston.gridsearch.model.SearchResult;
 import weka.core.Instances;
 
 import java.io.BufferedReader;
@@ -76,12 +80,14 @@ public class DecisionTreeModelTest extends TestCase {
             // setting class attribute
             dataInstances.setClassIndex(dataInstances.numAttributes() - 1);
 
+            Dataset dataset = new Dataset(dataInstances.relationName());
+
             DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
-            Set<SearchResult> searchResults = decisionTreeModel.j48Search(dataInstances);
+            Set<SearchResult> searchResults = decisionTreeModel.j48Search(dataset, dataInstances);
             assertNotSame(searchResults.size(), 0);
 
             for (SearchResult result : searchResults) {
-                assertEquals(result.getDatasetName(), dataInstances.relationName());
+                assertEquals(result.getDataset(), dataset);
                 assertEquals(result.getClass(), DecisionTreeSearchResult.class);
             }
         } catch (Exception e) {
@@ -93,7 +99,7 @@ public class DecisionTreeModelTest extends TestCase {
     @Test
     public void testJ48SearchNull() {
         DecisionTreeModel decisionTreeModel = new DecisionTreeModel();
-        Set<SearchResult> searchResults = decisionTreeModel.j48Search(null);
+        Set<SearchResult> searchResults = decisionTreeModel.j48Search(null, null);
         assertEquals(searchResults.size(), 0);
     }
 }

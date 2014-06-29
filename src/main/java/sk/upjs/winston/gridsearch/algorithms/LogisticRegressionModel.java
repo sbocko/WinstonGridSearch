@@ -1,5 +1,9 @@
 package sk.upjs.winston.gridsearch.algorithms;
 
+import sk.upjs.winston.gridsearch.model.Dataset;
+import sk.upjs.winston.gridsearch.model.LogisticRegressionSearchResult;
+import sk.upjs.winston.gridsearch.model.Model;
+import sk.upjs.winston.gridsearch.model.SearchResult;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.Logistic;
 import weka.core.Instances;
@@ -44,15 +48,16 @@ public class LogisticRegressionModel extends Model {
     /*
      * Performs logistic regression for r=0..1 with step {RIDGE_STEP} and returns RMSE for every value.
      * When something goes wrong during search, the result of this search is not included in result set.
+     * @param dataset dataset details which belongs to returned search result
      * @param dataInstances dataset instances
      * @return Set of LogisticRegressionSearchResult instances
      */
-    public Set<SearchResult> logisticRegressionSearch(Instances dataInstances) {
+    public Set<SearchResult> logisticRegressionSearch(Dataset dataset, Instances dataInstances) {
         Set<SearchResult> results = new HashSet<>();
         for (double r = 0; r <= 1; r += RIDGE_STEP) {
             double rmse = logisticRegression(dataInstances, r, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
             if (rmse != ERROR_DURING_CLASSIFICATION) {
-                SearchResult res = new LogisticRegressionSearchResult(dataInstances.relationName(), rmse, r, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
+                SearchResult res = new LogisticRegressionSearchResult(dataset, rmse, r, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
                 results.add(res);
             }
         }

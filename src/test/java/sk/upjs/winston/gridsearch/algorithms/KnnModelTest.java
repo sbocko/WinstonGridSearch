@@ -2,6 +2,10 @@ package sk.upjs.winston.gridsearch.algorithms;
 
 import junit.framework.TestCase;
 import org.junit.Test;
+import sk.upjs.winston.gridsearch.model.Dataset;
+import sk.upjs.winston.gridsearch.model.KnnSearchResult;
+import sk.upjs.winston.gridsearch.model.Model;
+import sk.upjs.winston.gridsearch.model.SearchResult;
 import weka.core.Instances;
 
 import java.io.BufferedReader;
@@ -76,12 +80,14 @@ public class KnnModelTest extends TestCase {
             // setting class attribute
             dataInstances.setClassIndex(dataInstances.numAttributes() - 1);
 
+            Dataset dataset = new Dataset(dataInstances.relationName());
+
             KnnModel knnModel = new KnnModel();
-            Set<SearchResult> searchResults = knnModel.knnSearch(dataInstances);
+            Set<SearchResult> searchResults = knnModel.knnSearch(dataset, dataInstances);
             assertEquals(searchResults.size(), KnnModel.MAX_K);
 
             for (SearchResult result : searchResults) {
-                assertEquals(result.getDatasetName(), dataInstances.relationName());
+                assertEquals(result.getDataset(), dataset);
                 assertEquals(result.getClass(), KnnSearchResult.class);
             }
         } catch (Exception e) {
@@ -93,7 +99,7 @@ public class KnnModelTest extends TestCase {
     @Test
     public void testKnnSearchNull() throws Exception {
         KnnModel knnModel = new KnnModel();
-        Set<SearchResult> searchResults = knnModel.knnSearch(null);
+        Set<SearchResult> searchResults = knnModel.knnSearch(null, null);
         assertEquals(searchResults.size(), 0);
     }
 }

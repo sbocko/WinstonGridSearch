@@ -2,6 +2,10 @@ package sk.upjs.winston.gridsearch.algorithms;
 
 import junit.framework.TestCase;
 import org.junit.Test;
+import sk.upjs.winston.gridsearch.model.Dataset;
+import sk.upjs.winston.gridsearch.model.LogisticRegressionSearchResult;
+import sk.upjs.winston.gridsearch.model.Model;
+import sk.upjs.winston.gridsearch.model.SearchResult;
 import weka.core.Instances;
 
 import java.io.BufferedReader;
@@ -67,7 +71,7 @@ public class LogisticRegressionModelTest extends TestCase {
     @Test
     public void testlogisticRegressionSearchNull() throws Exception {
         LogisticRegressionModel logisticRegressionModel = new LogisticRegressionModel();
-        Set<SearchResult> searchResults = logisticRegressionModel.logisticRegressionSearch(null);
+        Set<SearchResult> searchResults = logisticRegressionModel.logisticRegressionSearch(null, null);
         assertEquals(searchResults.size(), 0);
     }
 
@@ -83,12 +87,14 @@ public class LogisticRegressionModelTest extends TestCase {
             // setting class attribute
             dataInstances.setClassIndex(dataInstances.numAttributes() - 1);
 
+            Dataset dataset = new Dataset(dataInstances.relationName());
+
             LogisticRegressionModel logisticRegressionModel = new LogisticRegressionModel();
-            Set<SearchResult> searchResults = logisticRegressionModel.logisticRegressionSearch(dataInstances);
+            Set<SearchResult> searchResults = logisticRegressionModel.logisticRegressionSearch(dataset, dataInstances);
             assertNotSame(searchResults.size(), 0);
 
             for (SearchResult result : searchResults) {
-                assertEquals(result.getDatasetName(), dataInstances.relationName());
+                assertEquals(result.getDataset(), dataset);
                 assertEquals(((LogisticRegressionSearchResult) result).getMaximumNumberOfIterations(), LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
                 assertEquals(result.getClass(), LogisticRegressionSearchResult.class);
             }
