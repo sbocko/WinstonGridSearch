@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="sk.upjs.winston.gridsearch.model" >
+    <class name="DecisionTreeSearchResult" table="DECISION_TREE">
+        <meta attribute="class-description">
+            This class contains decision tree search result details.
+        </meta>
+        <id name="id" column="id">
+            <generator class="native"/>
+        </id>
+        <property name="dataset" column="dataset_id" type="Dataset"/>
+        <property name="rmse" column="rmse" type="double"/>
+        <property name="confidenceFactor" column="conf_factor" type="double"/>
+        <property name="minimumNumberOfInstancesPerLeaf" column="minNumberOfInstancesPerLeaf" type="int"/>
+        <property name="unpruned" column="unpruned" type="boolean"/>
+    </class>
+</hibernate-mapping>
