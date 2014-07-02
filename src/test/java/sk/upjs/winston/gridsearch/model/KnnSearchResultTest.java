@@ -6,36 +6,36 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class DatasetTest extends TestCase {
+public class KnnSearchResultTest extends TestCase {
+    public static final int TEST_K = 3;
+    public static final double TEST_RMSE = 0.9;
     private SessionFactory factory;
+    private Dataset testDataset;
 
-    @Before
     public void setUp() throws Exception {
+        super.setUp();
         try {
             factory = new Configuration().configure().buildSessionFactory();
         } catch (Throwable e) {
             e.printStackTrace();
             fail();
         }
+        testDataset = createAndSaveTestDataset();
     }
 
     @Test
-    public void testSaveDataset() throws Exception {
-        Long datasetId = null;
-        String datasetName = "testSaveDataset 1";
+    public void testSaveKnnSearchResult() throws Exception {
+        Long knnId = null;
 
-        //save dataset object to DB
+        //save knnSearchResult object to DB
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-
-            Dataset dataset = new Dataset(datasetName);
-            datasetId = (Long) session.save(dataset);
+            SearchResult knnSearchResult = new KnnSearchResult(this.testDataset, TEST_RMSE, TEST_K);
+            knnId = (Long) session.save(knnSearchResult);
 
             tx.commit();
         } catch (Exception e) {
@@ -46,16 +46,18 @@ public class DatasetTest extends TestCase {
             session.close();
         }
 
-        //check if dataset object exists in DB
+        //check if knnSearchResult object exists in DB
         session = factory.openSession();
         tx = null;
         try {
             tx = session.beginTransaction();
 
-            Dataset savedDataset = (Dataset) session.createCriteria(Dataset.class).
-                    add(Restrictions.eq("id", datasetId)).
+            KnnSearchResult knnSearchResult = (KnnSearchResult) session.createCriteria(KnnSearchResult.class).
+                    add(Restrictions.eq("id", knnId)).
                     uniqueResult();
-            assertEquals(savedDataset.getDatasetName(), datasetName);
+            assertEquals(knnSearchResult.getDataset().getDatasetName(), testDataset.getDatasetName());
+            assertEquals(knnSearchResult.getRmse(), TEST_RMSE);
+            assertEquals(knnSearchResult.getK(), TEST_K);
 
             tx.commit();
         } catch (Exception e) {
@@ -67,52 +69,19 @@ public class DatasetTest extends TestCase {
         }
 
 //        remove testing data from DB
-        deleteDataset(datasetId);
+        deleteSearchResult(knnId);
     }
 
-    @Test
-    public void testDeleteDataset() throws Exception {
-        Long datasetId = null;
-        String datasetName = "testDeleteDataset 1";
-
-        //save dataset to DB and check if it is saved
+    private void deleteSearchResult(Long knnId) {
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
 
-            Dataset dataset = new Dataset(datasetName);
-            datasetId = (Long) session.save(dataset);
-
-            Dataset savedDataset = (Dataset) session.createCriteria(Dataset.class).
-                    add(Restrictions.eq("id", datasetId)).
+            KnnSearchResult knnSearchResult = (KnnSearchResult) session.createCriteria(KnnSearchResult.class).
+                    add(Restrictions.eq("id", knnId)).
                     uniqueResult();
-            assertEquals(savedDataset.getDatasetName(), datasetName);
-
-            tx.commit();
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-            fail();
-        } finally {
-            session.close();
-        }
-
-        //delete dataset from DB
-        session = factory.openSession();
-        tx = null;
-        try {
-            tx = session.beginTransaction();
-
-            Dataset savedDataset = (Dataset) session.createCriteria(Dataset.class).
-                    add(Restrictions.eq("id", datasetId)).
-                    uniqueResult();
-            session.delete(savedDataset);
-
-            savedDataset = (Dataset) session.createCriteria(Dataset.class).
-                    add(Restrictions.eq("id", datasetId)).
-                    uniqueResult();
-            assertEquals(savedDataset, null);
+            session.delete(knnSearchResult);
 
             tx.commit();
         } catch (Exception e) {
@@ -124,17 +93,37 @@ public class DatasetTest extends TestCase {
         }
     }
 
-    private void deleteDataset(Long datasetId){
+    /*
+     * Create test dataset before tests. Used in setUp() method.
+     */
+    private Dataset createAndSaveTestDataset(){
+        Dataset dataset = null;
         Session session = factory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
+            dataset = new Dataset("name");
+            session.save(dataset);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            fail();
+        } finally {
+            session.close();
+        }
+        return dataset;
+    }
 
-            Dataset savedDataset = (Dataset) session.createCriteria(Dataset.class).
-                    add(Restrictions.eq("id", datasetId)).
-                    uniqueResult();
+    /*
+     * Delete test dataset after tests. Used in tearDown() method.
+     */
+    private void deleteTestDataset(Dataset savedDataset){
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
             session.delete(savedDataset);
-
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -145,8 +134,8 @@ public class DatasetTest extends TestCase {
         }
     }
 
-    @After
     public void tearDown() throws Exception {
+        deleteTestDataset(testDataset);
         factory.close();
     }
 }
