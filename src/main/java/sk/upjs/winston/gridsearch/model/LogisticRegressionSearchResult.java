@@ -10,6 +10,9 @@ public class LogisticRegressionSearchResult extends SearchResult {
     private double ridge;
     private int maximumNumberOfIterations;
 
+    public LogisticRegressionSearchResult(){
+    }
+
     public LogisticRegressionSearchResult(Dataset dataset, double rmse, double ridge, int maximumNumberOfIterations) {
         this.setDataset(dataset);
         this.setRmse(rmse);

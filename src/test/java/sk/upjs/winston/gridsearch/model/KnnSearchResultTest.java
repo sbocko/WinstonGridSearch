@@ -72,6 +72,54 @@ public class KnnSearchResultTest extends TestCase {
         deleteSearchResult(knnId);
     }
 
+    @Test
+    public void testDeleteKnnSearchResult() throws Exception {
+        Long knnId = null;
+
+        //save knnSearchResult object to DB
+        Session session = factory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            SearchResult knnSearchResult = new KnnSearchResult(this.testDataset, TEST_RMSE, TEST_K);
+            knnId = (Long) session.save(knnSearchResult);
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            fail();
+        } finally {
+            session.close();
+        }
+
+        //check if knnSearchResult object exists in DB
+        session = factory.openSession();
+        tx = null;
+        try {
+            tx = session.beginTransaction();
+
+            KnnSearchResult savedKnnSearchResult = (KnnSearchResult) session.createCriteria(KnnSearchResult.class).
+                    add(Restrictions.eq("id", knnId)).
+                    uniqueResult();
+            session.delete(savedKnnSearchResult);
+
+
+            savedKnnSearchResult = (KnnSearchResult) session.createCriteria(KnnSearchResult.class).
+                    add(Restrictions.eq("id", knnId)).
+                    uniqueResult();
+            assertEquals(savedKnnSearchResult, null);
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            fail();
+        } finally {
+            session.close();
+        }
+    }
+
     private void deleteSearchResult(Long knnId) {
         Session session = factory.openSession();
         Transaction tx = null;

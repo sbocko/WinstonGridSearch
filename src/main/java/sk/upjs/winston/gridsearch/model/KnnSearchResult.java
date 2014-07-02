@@ -8,6 +8,9 @@ package sk.upjs.winston.gridsearch.model;
 public class KnnSearchResult extends SearchResult{
     private int k;
 
+    public KnnSearchResult() {
+    }
+
     public KnnSearchResult(Dataset dataset,double rmse, int k) {
         this.setDataset(dataset);
         this.setRmse(rmse);

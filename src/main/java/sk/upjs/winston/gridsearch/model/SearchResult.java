@@ -7,10 +7,18 @@ package sk.upjs.winston.gridsearch.model;
  * Created by stefan on 6/8/14.
  */
 public abstract class SearchResult implements Comparable<SearchResult>{
+    private Long id;
     private Dataset dataset;
 //    root mean squared error
     private double rmse;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Dataset getDataset() {
         return dataset;

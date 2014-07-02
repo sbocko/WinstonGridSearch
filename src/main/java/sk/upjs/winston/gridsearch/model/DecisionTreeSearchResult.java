@@ -11,6 +11,9 @@ public class DecisionTreeSearchResult extends SearchResult {
     private int minimumNumberOfInstancesPerLeaf;
     private boolean unpruned;
 
+    public DecisionTreeSearchResult() {
+    }
+
     public DecisionTreeSearchResult(Dataset dataset, double rmse, double confidenceFactor, int minimumNumberOfInstancesPerLeaf, boolean unpruned) {
         this.setDataset(dataset);
         this.setRmse(rmse);
