@@ -12,6 +12,14 @@ public abstract class SearchResult implements Comparable<SearchResult>{
 //    root mean squared error
     private double rmse;
 
+    protected SearchResult() {
+    }
+
+    protected SearchResult(Dataset dataset, double rmse) {
+        this.dataset = dataset;
+        this.rmse = rmse;
+    }
+
     public Long getId() {
         return id;
     }

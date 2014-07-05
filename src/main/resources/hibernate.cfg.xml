@@ -27,6 +27,7 @@
         <mapping resource="Knn.hbm.xml"/>
         <mapping resource="DecisionTree.hbm.xml"/>
         <mapping resource="LogisticRegression.hbm.xml"/>
+        <mapping resource="Svm.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>

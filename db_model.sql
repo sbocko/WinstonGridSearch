@@ -42,6 +42,15 @@ create table logistic_regression(id int not null auto_increment,
 				 primary key (id),
 				 foreign key (dataset_id) references dataset(id));
 
+-- table SVM contains search results for SMO (SVM) algorithm
+create table svm(id int not null auto_increment,
+				 dataset_id int not null,
+				 rmse double,
+				 kernel varchar(30),
+				 complexity_constant double,
+				 epsilon_err double,
+				 primary key (id),
+				 foreign key (dataset_id) references dataset(id));
 
 show tables;
 select * from dataset;

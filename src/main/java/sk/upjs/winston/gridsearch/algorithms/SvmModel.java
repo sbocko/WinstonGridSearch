@@ -66,7 +66,7 @@ public class SvmModel extends Model {
         Set<SearchResult> results = new HashSet<>();
         double rmse;
         for (double c = MIN_C; c <= MAX_C; c += STEP_C) {
-            for (double p = MIN_P; p <= MAX_C; p += STEP_P) {
+            for (double p = MIN_P; p <= MAX_P; p += STEP_P) {
                 rmse = svm(dataInstances, new StringKernel(), c, p);
                 if (rmse != ERROR_DURING_CLASSIFICATION) {
                     SearchResult res = new SvmSearchResult(dataset, rmse, SvmSearchResult.KERNEL_STRING_KERNEL, c, p);
@@ -87,6 +87,7 @@ public class SvmModel extends Model {
                     SearchResult res = new SvmSearchResult(dataset, rmse, SvmSearchResult.KERNEL_RBF_KERNEL, c, p);
                     results.add(res);
                 }
+                System.out.println("c: " + c + ", p: " + p);
             }
         }
         return results;
