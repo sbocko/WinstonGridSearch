@@ -9,13 +9,41 @@ import java.io.IOException;
 
 public class CSV2ArffConverter {
 
+    /**
+     * takes 2 arguments:
+     * - CSV input directory
+     * - ARFF output directory
+     */
+    public static void main(String[] args) {
+        if (args.length != 2) {
+            System.out.println("\nUsage: CSV2ArffConverter <inputDir> <outputDir>\n");
+            System.exit(1);
+        }
+
+        File inputDir = new File(args[0]);
+        if (inputDir.isDirectory()) {
+            CSV2ArffConverter converter = new CSV2ArffConverter();
+            for (File file : inputDir.listFiles()) {
+                if (file.isFile()) {
+                    String outputFilePath = args[1];
+                    if (outputFilePath.endsWith("/") || outputFilePath.endsWith("\\")) {
+                        outputFilePath += file.getName().split(".")[0] + ".arff";
+                    } else {
+                        outputFilePath += "/" + file.getName().split(".")[0] + ".arff";
+                    }
+                    converter.convertCsvToArff(file, new File(outputFilePath));
+                }
+            }
+        }
+    }
+
     /*
      * Converts CSV data file to ARFF data file.
      * @param csvInput input data file in CSV format
      * @param arffOutput arff output data file
      * @return if conversion was successfull
      */
-    public boolean convertCsvToArff(File csvInput, File arffOutput){
+    public boolean convertCsvToArff(File csvInput, File arffOutput) {
         try {
             // load CSV
             CSVLoader loader = new CSVLoader();
@@ -28,25 +56,11 @@ public class CSV2ArffConverter {
             saver.setFile(arffOutput);
             saver.setDestination(arffOutput);
             saver.writeBatch();
-        } catch (IOException|NullPointerException e){
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
             return false;
         }
         return true;
-    }
-
-    /**
-     * takes 2 arguments:
-     * - CSV input file
-     * - ARFF output file
-     */
-    public static void main(String[] args) throws Exception {
-        if (args.length != 2) {
-            System.out.println("\nUsage: CSV2ArffConverter <input.csv> <output.arff>\n");
-            System.exit(1);
-        }
-        CSV2ArffConverter converter = new CSV2ArffConverter();
-        converter.convertCsvToArff(new File(args[0]),new File(args[1]));
     }
 
 }
