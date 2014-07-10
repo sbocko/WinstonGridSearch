@@ -6,10 +6,10 @@ package sk.upjs.winston.gridsearch.model;
  * and root mean squared error {rmse} for given dataset using these hyperparameters.
  * Created by stefan on 6/8/14.
  */
-public abstract class SearchResult implements Comparable<SearchResult>{
+public abstract class SearchResult implements Comparable<SearchResult> {
     private Long id;
     private Dataset dataset;
-//    root mean squared error
+    //    root mean squared error
     private double rmse;
 
     protected SearchResult() {
@@ -49,10 +49,10 @@ public abstract class SearchResult implements Comparable<SearchResult>{
      */
     @Override
     public int compareTo(SearchResult searchResult) {
-        if(this.rmse > searchResult.rmse){
+        if (this.rmse > searchResult.rmse) {
             return 1;
         }
-        if(this.rmse < searchResult.rmse){
+        if (this.rmse < searchResult.rmse) {
             return -1;
         }
         return 0;

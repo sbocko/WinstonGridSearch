@@ -1,7 +1,6 @@
 package sk.upjs.winston.gridsearch.model;
 
 /**
- *
  * This class stores single result of SVM (SMO) algorithm run for given dataset
  * and hyperparameter values for kernel (-K), complexity constant (-C)
  * and epsilon for round-off error (-P) of SVM (SMO) algorithm.

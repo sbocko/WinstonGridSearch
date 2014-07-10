@@ -26,7 +26,7 @@ public class KnnModel extends Model {
      * @param k k parameter for kNN algorithm
      * @return root mean squared error
      */
-    public double knn(Instances dataInstances, int k){
+    public double knn(Instances dataInstances, int k) {
         IBk ibk = new IBk(k);
         Evaluation evaluation = null;
         try {
@@ -46,11 +46,11 @@ public class KnnModel extends Model {
      * @param dataInstances dataset instances
      * @return Set of KnnSearchResult instances
      */
-    public Set<SearchResult> knnSearch(Dataset dataset, Instances dataInstances){
+    public Set<SearchResult> knnSearch(Dataset dataset, Instances dataInstances) {
         Set<SearchResult> results = new HashSet<>();
         for (int k = 1; k <= MAX_K; k++) {
-            double rmse = knn(dataInstances,k);
-            if(rmse != ERROR_DURING_CLASSIFICATION) {
+            double rmse = knn(dataInstances, k);
+            if (rmse != ERROR_DURING_CLASSIFICATION) {
                 SearchResult res = new KnnSearchResult(dataset, rmse, k);
                 results.add(res);
             }

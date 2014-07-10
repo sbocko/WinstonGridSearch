@@ -5,13 +5,13 @@ package sk.upjs.winston.gridsearch.model;
  * and hyperparameter value {k} of knn algorithm.
  * Created by stefan on 6/8/14.
  */
-public class KnnSearchResult extends SearchResult{
+public class KnnSearchResult extends SearchResult {
     private int k;
 
     public KnnSearchResult() {
     }
 
-    public KnnSearchResult(Dataset dataset,double rmse, int k) {
+    public KnnSearchResult(Dataset dataset, double rmse, int k) {
         this.setDataset(dataset);
         this.setRmse(rmse);
         this.k = k;

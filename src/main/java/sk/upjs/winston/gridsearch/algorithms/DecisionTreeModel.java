@@ -67,7 +67,7 @@ public class DecisionTreeModel extends Model {
             //from 5..1000 (MIN_NUMBER_OF_INSTANCES_PER_LEAF_MAX_SEARCH_VALUE) with step of 5 (MIN_NUMBER_OF_INSTANCES_PER_LEAF_STEP)
             for (int m = 0; m < MIN_NUMBER_OF_INSTANCES_PER_LEAF_MAX_SEARCH_VALUE; m += getNextStepForMinimumNumberOfInstancesPerLeaf(m)) {
                 //both pruned and unpruned results
-                for (boolean unpruned = false; unpruned != true; unpruned=true) {
+                for (boolean unpruned = false; unpruned != true; unpruned = true) {
                     rmse = j48DecisionTreeAnalysis(dataInstances, m, c, unpruned);
 
                     if (rmse != ERROR_DURING_CLASSIFICATION) {
