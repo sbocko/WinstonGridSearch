@@ -47,7 +47,7 @@ public class KnnModel extends Model {
      * @return Set of KnnSearchResult instances
      */
     public Set<SearchResult> knnSearch(Dataset dataset, Instances dataInstances) {
-        Set<SearchResult> results = new HashSet<>();
+        Set<SearchResult> results = new HashSet<SearchResult>();
         for (int k = 1; k <= MAX_K; k++) {
             double rmse = knn(dataInstances, k);
             if (rmse != ERROR_DURING_CLASSIFICATION) {

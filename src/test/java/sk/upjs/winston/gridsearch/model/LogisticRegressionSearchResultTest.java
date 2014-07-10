@@ -61,7 +61,7 @@ public class LogisticRegressionSearchResultTest extends TestCase {
             assertEquals(logisticRegressionSearchResult.getDataset().getDatasetName(), testDataset.getDatasetName());
             assertEquals(logisticRegressionSearchResult.getRmse(), TEST_RMSE);
             assertEquals(logisticRegressionSearchResult.getRidge(), TEST_RIDGE);
-            assertEquals(logisticRegressionSearchResult.getMaximumNumberOfIterations(),TEST_MAXIMUM_NUMBER_OF_ITERATIONS);
+            assertEquals(logisticRegressionSearchResult.getMaximumNumberOfIterations(), TEST_MAXIMUM_NUMBER_OF_ITERATIONS);
 
             tx.commit();
         } catch (Exception e) {
@@ -150,7 +150,7 @@ public class LogisticRegressionSearchResultTest extends TestCase {
     /*
      * Create test dataset before tests. Used in setUp() method.
      */
-    private Dataset createAndSaveTestDataset(){
+    private Dataset createAndSaveTestDataset() {
         Dataset dataset = null;
         Session session = factory.openSession();
         Transaction tx = null;
@@ -172,7 +172,7 @@ public class LogisticRegressionSearchResultTest extends TestCase {
     /*
      * Delete test dataset after tests. Used in tearDown() method.
      */
-    private void deleteTestDataset(Dataset savedDataset){
+    private void deleteTestDataset(Dataset savedDataset) {
         Session session = factory.openSession();
         Transaction tx = null;
         try {

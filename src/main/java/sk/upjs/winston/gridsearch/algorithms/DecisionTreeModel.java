@@ -59,7 +59,7 @@ public class DecisionTreeModel extends Model {
      * @return Set of DecisionTreeSearchResult instances
      */
     public Set<SearchResult> j48Search(Dataset dataset, Instances dataInstances) {
-        Set<SearchResult> results = new HashSet<>();
+        Set<SearchResult> results = new HashSet<SearchResult>();
 
         for (float c = PRUNING_CONFIDENCE_MIN; c <= PRUNING_CONFIDENCE_MAX; c += PRUNING_CONFIDENCE_STEP) {
             double rmse;

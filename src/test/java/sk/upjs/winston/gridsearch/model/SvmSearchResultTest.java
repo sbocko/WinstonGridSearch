@@ -148,7 +148,7 @@ public class SvmSearchResultTest extends TestCase {
     /*
      * Create test dataset before tests. Used in setUp() method.
      */
-    private Dataset createAndSaveTestDataset(){
+    private Dataset createAndSaveTestDataset() {
         Dataset dataset = null;
         Session session = factory.openSession();
         Transaction tx = null;
@@ -170,7 +170,7 @@ public class SvmSearchResultTest extends TestCase {
     /*
      * Delete test dataset after tests. Used in tearDown() method.
      */
-    private void deleteTestDataset(Dataset savedDataset){
+    private void deleteTestDataset(Dataset savedDataset) {
         Session session = factory.openSession();
         Transaction tx = null;
         try {

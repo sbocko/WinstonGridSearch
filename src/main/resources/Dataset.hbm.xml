@@ -3,7 +3,7 @@
         "-//Hibernate/Hibernate Mapping DTD//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping package="sk.upjs.winston.gridsearch.model" >
+<hibernate-mapping package="sk.upjs.winston.gridsearch.model">
     <class name="Dataset" table="dataset">
         <meta attribute="class-description">
             This class contains dataset details.

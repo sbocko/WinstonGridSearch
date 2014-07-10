@@ -63,7 +63,7 @@ public class SvmModel extends Model {
          * @return Set of SvmSearchResult instances
          */
     public Set<SearchResult> svmSearch(Dataset dataset, Instances dataInstances) {
-        Set<SearchResult> results = new HashSet<>();
+        Set<SearchResult> results = new HashSet<SearchResult>();
         double rmse;
         for (double c = MIN_C; c <= MAX_C; c += STEP_C) {
             for (double p = MIN_P; p <= MAX_P; p += STEP_P) {

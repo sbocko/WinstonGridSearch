@@ -53,7 +53,7 @@ public class LogisticRegressionModel extends Model {
      * @return Set of LogisticRegressionSearchResult instances
      */
     public Set<SearchResult> logisticRegressionSearch(Dataset dataset, Instances dataInstances) {
-        Set<SearchResult> results = new HashSet<>();
+        Set<SearchResult> results = new HashSet<SearchResult>();
         for (double r = 0; r <= 1; r += RIDGE_STEP) {
             double rmse = logisticRegression(dataInstances, r, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
             if (rmse != ERROR_DURING_CLASSIFICATION) {

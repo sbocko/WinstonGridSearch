@@ -54,4 +54,5 @@ create table svm(id int not null auto_increment,
 
 show tables;
 select * from dataset;
+select * from svm;
 select * from knn;
