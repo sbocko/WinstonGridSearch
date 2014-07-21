@@ -5,7 +5,6 @@ import weka.core.converters.ArffSaver;
 import weka.core.converters.CSVLoader;
 
 import java.io.File;
-import java.io.IOException;
 
 public class CSV2ArffConverter {
 
@@ -24,12 +23,12 @@ public class CSV2ArffConverter {
         if (inputDir.isDirectory()) {
             CSV2ArffConverter converter = new CSV2ArffConverter();
             for (File file : inputDir.listFiles()) {
-                if (file.isFile()) {
+                if (file.isFile() && !file.isHidden()) {
                     String outputFilePath = args[1];
                     if (outputFilePath.endsWith("/") || outputFilePath.endsWith("\\")) {
-                        outputFilePath += file.getName().split(".")[0] + ".arff";
+                        outputFilePath += file.getName().split(".data")[0] + ".arff";
                     } else {
-                        outputFilePath += "/" + file.getName().split(".")[0] + ".arff";
+                        outputFilePath += "/" + file.getName().split(".data")[0] + ".arff";
                     }
                     converter.convertCsvToArff(file, new File(outputFilePath));
                 }
@@ -56,11 +55,10 @@ public class CSV2ArffConverter {
             saver.setFile(arffOutput);
             saver.setDestination(arffOutput);
             saver.writeBatch();
-        } catch (IOException e) {
+        } catch (Exception e){
             e.printStackTrace();
+            System.out.println("Error: " + csvInput.getName());
             return false;
-        } catch (NullPointerException e){
-            e.printStackTrace();
         }
         return true;
     }
