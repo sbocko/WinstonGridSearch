@@ -27,13 +27,13 @@ public class Main {
     private static SessionFactory factory;
 
     public static void main(String[] args) {
-//        if (args.length != 1) {
-//            System.out.println(getHelp());
-//            return;
-//        }
-//
-//        String filePath = args[0];
-        String filePath = "./other/iris.arff";
+        if (args.length != 1) {
+            System.out.println(getHelp());
+            return;
+        }
+
+        String filePath = args[0];
+//        String filePath = "./other/iris.arff";
 
         // create session factory
         try {
