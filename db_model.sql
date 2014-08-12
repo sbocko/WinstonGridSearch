@@ -56,3 +56,16 @@ show tables;
 select * from dataset;
 select * from svm;
 select * from knn;
+
+select count(*) from dataset;
+select count(*) from svm;
+select count(*) from knn;
+select count(*) from decision_tree;
+select count(*) from logistic_regression;
+
+-- last inserted object 
+select table_schema,table_name,max_time from information_schema.tables t1 JOIN 
+ (select MAX(t2.create_time) AS max_time FROM 
+  information_schema.tables t2 where  
+  table_schema ='stefan_bocko') as t3  
+on t1.create_time = t3.max_time;

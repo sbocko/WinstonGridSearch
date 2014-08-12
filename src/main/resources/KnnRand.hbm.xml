@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="sk.upjs.winston.gridsearch.model">
+    <class name="KnnSearchResult" table="knn_rand">
+        <meta attribute="class-description">
+            This class contains knn search result details.
+        </meta>
+        <id name="id" column="id">
+            <generator class="native"/>
+        </id>
+        <many-to-one name="dataset" column="dataset_id"/>
+        <property name="rmse" column="rmse" type="double"/>
+        <property name="k" column="k" type="int"/>
+
+    </class>
+</hibernate-mapping>

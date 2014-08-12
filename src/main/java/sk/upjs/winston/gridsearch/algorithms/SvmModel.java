@@ -26,7 +26,7 @@ public class SvmModel extends Model {
     public static final double MAX_P = DEFAULT_P * 5;
     public static final double STEP_P = DEFAULT_P / 20;
 
-    /*
+    /**
      * Performes SMO algorithm and evaluates results 10 times with 10-fold cross validation method.
      * Returnes the mean squared error for given model.
      * @param dataInstances dataset instances
@@ -53,7 +53,7 @@ public class SvmModel extends Model {
         return evaluation.rootMeanSquaredError();
     }
 
-    /*
+    /**
          * Performs SVM for kernels (StringKernel, PolyKernel, NormalizedPolyKernel, RBFKernel)
          * with default parameters, complexity constant C=MIN_C..MAX_C with step STEP_C and
          * epsilonRoundOffError P=MIN_P..MAX_P with step STEP_P. Returns RMSE for every values combination.
@@ -93,5 +93,71 @@ public class SvmModel extends Model {
         return results;
     }
 
+    /**
+     * Performes SVM algorithm with random
+     * hyperparameter values from default hyperparameter space
+     * and evaluates results 10 times with 10-fold cross validation method.
+     * Returnes the mean squared error for given model.
+     * @param dataInstances dataset instances
+     *
+     * @return root mean squared error
+     */
+    public double svmRandomAnalysisWithDefaultParameterSpace(Instances dataInstances) {
+        Kernel kernel = getRandomParameterKernel();
+        double complexityConstant = getRandomParameterComplexityConstant(MIN_C,MAX_C);
+        double epsilonRoundOffError = getRandomParameterEpsilonRoundOffError(MIN_P,MAX_P);
+        return svm(dataInstances,kernel,complexityConstant,epsilonRoundOffError);
+    }
+
+    /**
+     * Generates a random kernel parameter for SVM algorithm.
+     * Possible kernels are: StringKernel, PolyKernel, NormalizedPolyKernel, RBFKernel.
+     * Each kernel has equal probability to be chosen.
+     *
+     * @return the random kernel instance
+     */
+    public Kernel getRandomParameterKernel() {
+        double rand = Math.random();
+        if(rand < 0.25d){
+            return new StringKernel();
+        }else if(rand < 0.5d){
+            return new PolyKernel();
+        }else if(rand < 0.75d){
+            return new NormalizedPolyKernel();
+        }
+        return new RBFKernel();
+    }
+
+    /**
+     * Generates a random value for complexity constant parameter of SVM algorithm.
+     *
+     * @param from min value for the generated random number (inclusive)
+     * @param to   max value for the generated random number (exclusive)
+     * @return the random double value
+     */
+    public double getRandomParameterComplexityConstant(double from, double to) {
+        if (from > to) {
+            double f = from;
+            from = to;
+            to = f;
+        }
+        return from + Math.random() * (to - from);
+    }
+
+    /**
+     * Generates a random value for epsilon round off error parameter of SVM algorithm.
+     *
+     * @param from min value for the generated random number (inclusive)
+     * @param to   max value for the generated random number (exclusive)
+     * @return the random double value
+     */
+    public double getRandomParameterEpsilonRoundOffError(double from, double to) {
+        if (from > to) {
+            double f = from;
+            from = to;
+            to = f;
+        }
+        return from + Math.random() * (to - from);
+    }
 
 }

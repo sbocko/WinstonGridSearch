@@ -14,6 +14,7 @@
         <!-- stefan_bocko is the database name -->
         <property name="hibernate.connection.url">
             jdbc:mysql://localhost/stefan_bocko
+            <!--jdbc:mysql://master.exp.upjs.sk/stefan_bocko-->
         </property>
         <property name="hibernate.connection.username">
             stefan_bocko
@@ -22,12 +23,19 @@
             NPr-uMW-GM8-k9Y
         </property>
 
-        <!-- List of XML mapping files -->
-        <mapping resource="Dataset.hbm.xml"/>
-        <mapping resource="Knn.hbm.xml"/>
-        <mapping resource="DecisionTree.hbm.xml"/>
-        <mapping resource="LogisticRegression.hbm.xml"/>
-        <mapping resource="Svm.hbm.xml"/>
+        <!--&lt;!&ndash; List of XML mapping files &ndash;&gt;-->
+        <!--<mapping resource="Dataset.hbm.xml"/>-->
+        <!--<mapping resource="Knn.hbm.xml"/>-->
+        <!--<mapping resource="DecisionTree.hbm.xml"/>-->
+        <!--<mapping resource="LogisticRegression.hbm.xml"/>-->
+        <!--<mapping resource="Svm.hbm.xml"/>-->
+
+        <!-- List of XML mapping files for random search-->
+        <mapping resource="DatasetRand.hbm.xml"/>
+        <mapping resource="KnnRand.hbm.xml"/>
+        <mapping resource="DecisionTreeRand.hbm.xml"/>
+        <mapping resource="LogisticRegressionRand.hbm.xml"/>
+        <mapping resource="SvmRand.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>
