@@ -129,16 +129,15 @@ public class DecisionTreeModel extends Model {
 
     /**
      * Performes j48 decision tree algorithm with random
-     * hyperparameter values from default hyperparameter space
-     * and evaluates results 10 times with 10-fold cross validation method.
+     * hyperparameter and evaluates results 10 times with 10-fold cross validation method.
      * Returnes the mean squared error for given model.
      *
      * @param dataInstances dataset instances
      * @return root mean squared error
      */
-    public double j48DecisionTreeRandomAnalysisWithDefaultParameterSpace(Instances dataInstances) {
-        int m = getRandomParameterM(MIN_NUMBER_OF_INSTANCES_PER_LEAF_MIN_SEARCH_VALUE, MIN_NUMBER_OF_INSTANCES_PER_LEAF_MAX_SEARCH_VALUE);
-        float c = getRandomParameterC(PRUNING_CONFIDENCE_MIN, PRUNING_CONFIDENCE_MAX);
+    public double j48DecisionTreeRandomAnalysis(Instances dataInstances) {
+        int m = getRandomParameterM(MIN_NUMBER_OF_INSTANCES_PER_LEAF_MIN_SEARCH_VALUE, MIN_NUMBER_OF_INSTANCES_PER_LEAF_MAX_SEARCH_VALUE*5);
+        float c = getRandomParameterC(PRUNING_CONFIDENCE_MIN, PRUNING_CONFIDENCE_MAX*5);
         boolean unpruned = getRandomParameterUnpruned();
         return j48DecisionTreeAnalysis(dataInstances, m, c, unpruned);
     }

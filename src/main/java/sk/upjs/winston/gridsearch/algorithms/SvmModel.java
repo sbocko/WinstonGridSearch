@@ -95,17 +95,16 @@ public class SvmModel extends Model {
 
     /**
      * Performes SVM algorithm with random
-     * hyperparameter values from default hyperparameter space
-     * and evaluates results 10 times with 10-fold cross validation method.
+     * hyperparameter values and evaluates results 10 times with 10-fold cross validation method.
      * Returnes the mean squared error for given model.
      * @param dataInstances dataset instances
      *
      * @return root mean squared error
      */
-    public double svmRandomAnalysisWithDefaultParameterSpace(Instances dataInstances) {
+    public double svmRandomAnalysis(Instances dataInstances) {
         Kernel kernel = getRandomParameterKernel();
-        double complexityConstant = getRandomParameterComplexityConstant(MIN_C,MAX_C);
-        double epsilonRoundOffError = getRandomParameterEpsilonRoundOffError(MIN_P,MAX_P);
+        double complexityConstant = getRandomParameterComplexityConstant(MIN_C,MAX_C*5);
+        double epsilonRoundOffError = getRandomParameterEpsilonRoundOffError(MIN_P/2,MAX_P*2);
         return svm(dataInstances,kernel,complexityConstant,epsilonRoundOffError);
     }
 

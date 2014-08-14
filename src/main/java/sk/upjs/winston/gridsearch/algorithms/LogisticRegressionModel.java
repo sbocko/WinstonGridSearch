@@ -69,8 +69,7 @@ public class LogisticRegressionModel extends Model {
     }
 
     /**
-     * Performes logistic regression algorithm with random
-     * value for ridge hyperparameter from default hyperparameter space.
+     * Performes logistic regression algorithm with random.
      * Maximum number of iterations is set to default value (-1), which means,
      * that algorithm will run until the convergence. Evaluates the results
      * 10 times with 10-fold cross validation method.
@@ -80,8 +79,8 @@ public class LogisticRegressionModel extends Model {
      *
      * @return root mean squared error
      */
-    public double logisticRegressionRandomAnalysisWithDefaultParameterSpace(Instances dataInstances) {
-        double ridge = getRandomParameterRidge(MIN_RIDGE,MAX_RIDGE);
+    public double logisticRegressionRandomAnalysis(Instances dataInstances) {
+        double ridge = getRandomParameterRidge(MIN_RIDGE,MAX_RIDGE*5);
         return logisticRegression(dataInstances,ridge, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
     }
 

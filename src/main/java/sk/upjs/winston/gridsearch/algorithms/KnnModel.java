@@ -63,15 +63,14 @@ public class KnnModel extends Model {
 
     /**
      * Performes kNN algorithm with random
-     * hyperparameter values from default hyperparameter space
-     * and evaluates results 10 times with 10-fold cross validation method.
+     * hyperparameter values and evaluates results 10 times with 10-fold cross validation method.
      * Returnes the mean squared error for given model.
      *
      * @param dataInstances dataset instances
      * @return root mean squared error
      */
-    public double knnRandomAnalysisWithDefaultParameterSpace(Instances dataInstances) {
-        int k = getRandomParameterK(MIN_K, MAX_K);
+    public double knnRandomAnalysis(Instances dataInstances) {
+        int k = getRandomParameterK(MIN_K, MAX_K*5);
         return knn(dataInstances, k);
     }
 
