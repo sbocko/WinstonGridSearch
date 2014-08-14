@@ -60,22 +60,48 @@ public class Main {
             session.save(dataset);
 
             Set<SearchResult> results = new HashSet<SearchResult>();
+            for (int i = 0; i < 100; i++) {
+                KnnModel knn = new KnnModel();
+                results.add(knn.knnRandomAnalysis(dataInstances, dataset));
+            }
+            saveSearchResults(session,results);
 
-            KnnModel knn = new KnnModel();
-            results = knn.knnSearch(dataset, dataInstances);
+            results = new HashSet<SearchResult>();
+            for (int i = 0; i < 2500; i++) {
+                DecisionTreeModel decisionTree = new DecisionTreeModel();
+                results.add(decisionTree.j48DecisionTreeRandomAnalysis(dataInstances, dataset));
+            }
             saveSearchResults(session, results);
 
-            DecisionTreeModel decisionTree = new DecisionTreeModel();
-            results = decisionTree.j48Search(dataset, dataInstances);
+            results = new HashSet<SearchResult>();
+            for (int i = 0; i < 50; i++) {
+                LogisticRegressionModel logisticRegressionModel = new LogisticRegressionModel();
+                results.add(logisticRegressionModel.logisticRegressionRandomAnalysis(dataInstances, dataset));
+            }
             saveSearchResults(session, results);
 
-            LogisticRegressionModel logisticRegression = new LogisticRegressionModel();
-            results = logisticRegression.logisticRegressionSearch(dataset, dataInstances);
-            saveSearchResults(session, results);
+            for (int i = 0; i < 5000; i++) {
+                SvmModel svmModel = new SvmModel();
+                session.save(svmModel.svmRandomAnalysis(dataInstances, dataset));
+            }
 
-            SvmModel svm = new SvmModel();
-            results = svm.svmSearch(dataset, dataInstances);
-            saveSearchResults(session, results);
+//            Set<SearchResult> results = new HashSet<SearchResult>();
+//
+//            KnnModel knn = new KnnModel();
+//            results = knn.knnSearch(dataset, dataInstances);
+//            saveSearchResults(session, results);
+//
+//            DecisionTreeModel decisionTree = new DecisionTreeModel();
+//            results = decisionTree.j48Search(dataset, dataInstances);
+//            saveSearchResults(session, results);
+//
+//            LogisticRegressionModel logisticRegression = new LogisticRegressionModel();
+//            results = logisticRegression.logisticRegressionSearch(dataset, dataInstances);
+//            saveSearchResults(session, results);
+//
+//            SvmModel svm = new SvmModel();
+//            results = svm.svmSearch(dataset, dataInstances);
+//            saveSearchResults(session, results);
 
             logger.log(Level.FINE, "Dataset " + args[0] + " processed successfully.");
             tx.commit();

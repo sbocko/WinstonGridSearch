@@ -69,19 +69,19 @@ public class LogisticRegressionModel extends Model {
     }
 
     /**
-     * Performes logistic regression algorithm with random.
+     * Performes logistic regression algorithm with random parameter values.
      * Maximum number of iterations is set to default value (-1), which means,
      * that algorithm will run until the convergence. Evaluates the results
      * 10 times with 10-fold cross validation method.
-     * Returnes the mean squared error for given model.
+     * Returnes the LogisticRegressionSearchResult object for given model.
      *
-     * @param dataInstances             dataset instances
-     *
-     * @return root mean squared error
+     * @param dataInstances dataset instances
+     * @param dataset dataset details which belongs to returned search result
+     * @return logistic regression search result object
      */
-    public double logisticRegressionRandomAnalysis(Instances dataInstances) {
-        double ridge = getRandomParameterRidge(MIN_RIDGE,MAX_RIDGE*5);
-        return logisticRegression(dataInstances,ridge, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
+    public SearchResult logisticRegressionRandomAnalysis(Instances dataInstances, Dataset dataset) {
+        double ridge = getRandomParameterRidge(MIN_RIDGE, MAX_RIDGE * 5);
+        return new LogisticRegressionSearchResult(dataset, logisticRegression(dataInstances, ridge, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE), ridge, LogisticRegressionSearchResult.ITERATE_UNTIL_CONVERGENCE);
     }
 
     /**

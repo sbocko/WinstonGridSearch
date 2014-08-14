@@ -64,14 +64,15 @@ public class KnnModel extends Model {
     /**
      * Performes kNN algorithm with random
      * hyperparameter values and evaluates results 10 times with 10-fold cross validation method.
-     * Returnes the mean squared error for given model.
+     * Returnes the KnnSearchResult object for given model.
      *
      * @param dataInstances dataset instances
-     * @return root mean squared error
+     * @param dataset dataset details which belongs to returned search result
+     * @return knn search result object
      */
-    public double knnRandomAnalysis(Instances dataInstances) {
+    public SearchResult knnRandomAnalysis(Instances dataInstances, Dataset dataset) {
         int k = getRandomParameterK(MIN_K, MAX_K*5);
-        return knn(dataInstances, k);
+        return new KnnSearchResult(dataset, knn(dataInstances, k), k);
     }
 
     /**

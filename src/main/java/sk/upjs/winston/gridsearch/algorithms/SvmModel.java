@@ -96,16 +96,27 @@ public class SvmModel extends Model {
     /**
      * Performes SVM algorithm with random
      * hyperparameter values and evaluates results 10 times with 10-fold cross validation method.
-     * Returnes the mean squared error for given model.
-     * @param dataInstances dataset instances
+     * Returnes the SvmSearchResult object for given model.
      *
-     * @return root mean squared error
+     * @param dataInstances dataset instances
+     * @param dataset dataset details which belongs to returned search result
+     *
+     * @return svm search result object
      */
-    public double svmRandomAnalysis(Instances dataInstances) {
+    public SvmSearchResult svmRandomAnalysis(Instances dataInstances, Dataset dataset) {
         Kernel kernel = getRandomParameterKernel();
         double complexityConstant = getRandomParameterComplexityConstant(MIN_C,MAX_C*5);
         double epsilonRoundOffError = getRandomParameterEpsilonRoundOffError(MIN_P/2,MAX_P*2);
-        return svm(dataInstances,kernel,complexityConstant,epsilonRoundOffError);
+        if(kernel instanceof StringKernel){
+            return new SvmSearchResult(dataset, svm(dataInstances,kernel,complexityConstant,epsilonRoundOffError), SvmSearchResult.KERNEL_STRING_KERNEL, complexityConstant, epsilonRoundOffError);
+        } else if(kernel instanceof PolyKernel){
+            return new SvmSearchResult(dataset, svm(dataInstances,kernel,complexityConstant,epsilonRoundOffError), SvmSearchResult.KERNEL_POLYNOMIAL_KERNEL, complexityConstant, epsilonRoundOffError);
+        } else if(kernel instanceof NormalizedPolyKernel){
+            return new SvmSearchResult(dataset, svm(dataInstances,kernel,complexityConstant,epsilonRoundOffError), SvmSearchResult.KERNEL_NORMALIZED_POLYNOMIAL_KERNEL, complexityConstant, epsilonRoundOffError);
+        } else if(kernel instanceof RBFKernel){
+            return new SvmSearchResult(dataset, svm(dataInstances,kernel,complexityConstant,epsilonRoundOffError), SvmSearchResult.KERNEL_RBF_KERNEL, complexityConstant, epsilonRoundOffError);
+        }
+        return null;
     }
 
     /**
