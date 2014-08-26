@@ -138,7 +138,7 @@ public class DecisionTreeModel extends Model {
      */
     public SearchResult j48DecisionTreeRandomAnalysis(Instances dataInstances, Dataset dataset) {
         int m = getRandomParameterM(MIN_NUMBER_OF_INSTANCES_PER_LEAF_MIN_SEARCH_VALUE, MIN_NUMBER_OF_INSTANCES_PER_LEAF_MAX_SEARCH_VALUE * 5);
-        float c = getRandomParameterC(PRUNING_CONFIDENCE_MIN, PRUNING_CONFIDENCE_MAX * 5);
+        float c = getRandomParameterC(PRUNING_CONFIDENCE_MIN, PRUNING_CONFIDENCE_MAX * 2);
         boolean unpruned = getRandomParameterUnpruned();
         return new DecisionTreeSearchResult(dataset, j48DecisionTreeAnalysis(dataInstances, m, c, unpruned), c, m, unpruned);
     }

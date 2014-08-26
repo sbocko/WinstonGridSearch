@@ -89,7 +89,7 @@ public class KnnModel extends Model {
             from = to;
             to = f;
         }
-        return from + (int) Math.random() * (to - from);
+        return from + (int) (Math.random() * (to - from));
     }
 
 }

@@ -13,8 +13,8 @@
 
         <!-- stefan_bocko is the database name -->
         <property name="hibernate.connection.url">
-            jdbc:mysql://localhost/stefan_bocko
-            <!--jdbc:mysql://master.exp.upjs.sk/stefan_bocko-->
+            <!--jdbc:mysql://localhost/stefan_bocko-->
+            jdbc:mysql://master.exp.upjs.sk/stefan_bocko
         </property>
         <property name="hibernate.connection.username">
             stefan_bocko
@@ -23,7 +23,7 @@
             NPr-uMW-GM8-k9Y
         </property>
 
-        <!--&lt;!&ndash; List of XML mapping files &ndash;&gt;-->
+        <!-- List of XML mapping files -->
         <!--<mapping resource="Dataset.hbm.xml"/>-->
         <!--<mapping resource="Knn.hbm.xml"/>-->
         <!--<mapping resource="DecisionTree.hbm.xml"/>-->
