@@ -69,3 +69,32 @@ select table_schema,table_name,max_time from information_schema.tables t1 JOIN
   information_schema.tables t2 where  
   table_schema ='stefan_bocko') as t3  
 on t1.create_time = t3.max_time;
+
+-- datasety so vsetkymi vypoctami
+select distinct(name) from dataset d join
+	knn k on d.id = k.dataset_id join
+	decision_tree t on d.id = t.dataset_id join
+	logistic_regression l on d.id = l.dataset_id join
+	svm s on d.id = s.dataset_id;
+
+-- datasety s troma vypoctami  
+select distinct(d.id), d.name from dataset d join
+	knn k on d.id = k.dataset_id join
+	decision_tree t on d.id = t.dataset_id join
+	logistic_regression l on d.id = l.dataset_id;
+
+-- pocty vysledkov pre jednotlive datasety
+select dataset_id, count(*) from knn kn where kn.dataset_id in (select distinct(d.id) from dataset d join
+	knn k on d.id = k.dataset_id join
+	decision_tree t on d.id = t.dataset_id join
+	logistic_regression l on d.id = l.dataset_id) group by kn.dataset_id;
+
+-- pocty vysledkov pre jednotlive datasety s default hodnotami
+select dataset_id, count(*) from decision_tree kn where kn.dataset_id in (select distinct(d.id) from dataset d join
+	knn k on d.id = k.dataset_id join
+	decision_tree t on d.id = t.dataset_id join
+	logistic_regression l on d.id = l.dataset_id) and kn.min_number_of_instances_per_leaf = 2 and kn.confidence_factor = 0.25;
+
+select min_number_of_instances_per_leaf parameter, sum(rmse) suma from decision_tree group by parameter order by suma;
+
+select count(*) from decision_tree where rmse > 0;

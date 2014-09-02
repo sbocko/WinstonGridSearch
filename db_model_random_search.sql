@@ -56,5 +56,12 @@ select * from dataset_rand;
 select count(*) from decision_tree_rand;
 select count(*) from logistic_regression_rand;
 select count(*) from knn_rand;
-select * from svm_rand order by epsilon_err desc;
+select count(*) from svm_rand;
+select * from (select count(*) pocet from svm_rand group by dataset_id) p where p.pocet = 11880;
+select count(*) from svm_rand where rmse != -1;
 -- select distinct(name) from dataset;
+
+select count(*) from decision_tree_rand where rmse = 0;
+
+select * from dataset;
+select count(*) from logistic_regression where dataset_id=56 and rmse > 0.34952013135066345;

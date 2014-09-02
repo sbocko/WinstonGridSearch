@@ -36,4 +36,12 @@ public class Dataset {
     public void setDatasetName(String datasetName) {
         this.datasetName = datasetName;
     }
+
+    @Override
+    public String toString() {
+        return "Dataset{" +
+                "id=" + id +
+                ", datasetName='" + datasetName + '\'' +
+                '}';
+    }
 }
