@@ -32,7 +32,7 @@ public class SimilarityDefaultGridSearch {
 
             System.out.format("\n%32s%32s%32s%32s%32s%15s%15s\n\n", "Dataset", "Most similar dataset", "Dissimilarity", "Best rmse", "Similarity search rmse", "Position", "<= default");
 
-            List<Dataset> datasets = databaseConnector.getApplicableDatasets();
+            List<Dataset> datasets = databaseConnector.getApplicableDatasetsForDefaultGridSimilaritySearch();
             for (int i = 0; i < datasets.size(); i++) {
                 Dataset targetDataset = datasets.get(i);
                 double minDissimilarity = Double.MAX_VALUE;
@@ -51,7 +51,7 @@ public class SimilarityDefaultGridSearch {
                 }
 
                 //get best hyperparameter values
-                SearchResult bestSearch = databaseConnector.similaritySearchForDataset(targetDataset, databaseConnector.bestSearchResultForDatasetWithoutSVM(mostSimilarDataset));
+                SearchResult bestSearch = databaseConnector.similaritySearchForDatasetWithoutSVM(targetDataset, databaseConnector.bestSearchResultForDatasetWithoutSVM(mostSimilarDataset));
 
                 String position = databaseConnector.numberOfBetterSearchResultsForDatasetWithoutSVM(targetDataset, bestSearch.getRmse()) + "/" +
                         databaseConnector.totalNumberOfSearchResultsForDatasetWithoutSVM(targetDataset);
