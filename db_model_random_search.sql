@@ -8,6 +8,7 @@ drop table if exists `knn_rand`;
 drop table if exists `decision_tree_rand`;
 drop table if exists `logistic_regression_rand`;
 drop table if exists `svm_rand`;
+drop table if exists `similarity_best_rand`;
 drop table if exists `dataset_rand`;
 
 -- table DATASET contains info about analyzed dataset
@@ -52,16 +53,31 @@ create table svm_rand(id int not null auto_increment,
 				 primary key (id),
 				 foreign key (dataset_id) references dataset_rand(id));
 
-select * from dataset_rand;
+-- table similarity_best_rand contains search results for SMO (SVM) algorithm
+create table similarity_best_rand(id int not null auto_increment,
+				 dataset_id int not null,
+				 dataset_similar_id int not null,
+				 rmse double,
+				 similarity_err double,
+				 primary key (id),
+				 foreign key (dataset_id) references dataset_rand(id));
+
+select name from dataset_rand;
 select count(*) from decision_tree_rand;
 select count(*) from logistic_regression_rand;
 select count(*) from knn_rand;
 select count(*) from svm_rand;
+select * from similarity_best_rand;
 select * from (select count(*) pocet from svm_rand group by dataset_id) p where p.pocet != 11880;
 select count(*) from svm_rand where rmse != -1;
 -- select distinct(name) from dataset;
 
 select count(*) from decision_tree_rand where rmse = 0;
 
-select * from dataset;
+select * from dataset_rand where name='original.data';
+select * from logistic_regression_rand where dataset_id=42;
 select count(*) from knn where dataset_id=56 and rmse < 0.34952013135066345;
+
+select * from decision_tree_rand where dataset_id=59 order by rmse;
+
+select count(*) from similarity_best_rand;

@@ -1,4 +1,4 @@
-@relation iris
+@relation iris.data
 
 @attribute 'sepal length in cm' numeric
 @attribute 'sepal width in cm' numeric

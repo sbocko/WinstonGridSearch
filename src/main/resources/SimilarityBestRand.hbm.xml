@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="sk.upjs.winston.gridsearch.model">
+    <class name="SimilarityBestSearchResult" table="similarity_best_rand">
+        <meta attribute="class-description">
+            This class contains result details for similarity search
+            based on the best results for given dataset searches.
+        </meta>
+        <id name="id" column="id">
+            <generator class="native"/>
+        </id>
+        <many-to-one name="dataset" column="dataset_id"/>
+        <many-to-one name="similarDataset" column="dataset_similar_id"/>
+        <property name="rmse" column="rmse" type="double"/>
+        <property name="similarityError" column="similarity_err" type="double"/>
+
+    </class>
+</hibernate-mapping>

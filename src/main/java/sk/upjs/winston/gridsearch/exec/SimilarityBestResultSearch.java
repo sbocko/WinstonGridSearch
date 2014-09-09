@@ -62,11 +62,12 @@ public class SimilarityBestResultSearch {
     private static SessionFactory factory;
 
     public static void main(String[] args) {
-        if (args.length != 2) {
+        if (args.length != 1) {
+            System.out.println("No datafile on input.");
             return;
         }
-        String datasetName = args[0];
-        String datasetFolder = args[1];
+        String datasetFilePath = args[0];
+//        String datasetFilePath = "./other/iris.arff";
 
         // create session factory
         try {
@@ -82,9 +83,10 @@ public class SimilarityBestResultSearch {
         try {
             tx = session.beginTransaction();
             DatabaseConnector databaseConnector = new DatabaseConnector(session);
-
+            String datasetName = getDatasetNameFromDataFile(datasetFilePath);
             Dataset targetDataset = databaseConnector.getDatasetByName(datasetName);
             if (targetDataset == null) {
+                System.out.println("Could not find dataset for name: " + datasetName);
                 return;
             }
 
@@ -92,14 +94,21 @@ public class SimilarityBestResultSearch {
             List<Dataset> datasetList = databaseConnector.getApplicableDatasetsForBestResultRandomSimilaritySearch();
             datasetList.remove(targetDataset);
 
-            //
             for (Dataset otherDataset : datasetList) {
+                System.out.println("Processing dataset: " + targetDataset + " for comparison with: " + otherDataset.getDatasetName());
                 SearchResult bestSearchResultForOtherDataset = databaseConnector.bestSearchResultForDataset(otherDataset);
-                SearchResult searchResultFromSS = databaseConnector.similaritySearchForDatasetWithoutSVM(targetDataset, bestSearchResultForOtherDataset);
+                SearchResult searchResultFromSS = databaseConnector.similaritySearchForDataset(targetDataset, bestSearchResultForOtherDataset);
+                double similaritySearchRmse;
                 if (searchResultFromSS == null) {
-                    performNewSearchWithGivenHyperparametersForDataset(targetDataset, bestSearchResultForOtherDataset, datasetFolder);
+                    similaritySearchRmse = performNewSearchWithGivenHyperparametersForData(bestSearchResultForOtherDataset, datasetFilePath);
+                } else {
+                    similaritySearchRmse = searchResultFromSS.getRmse();
                 }
-
+                if(bestSearchResultForOtherDataset != null && similaritySearchRmse != -1) {
+                    double dissimilarity = databaseConnector.datasetDissimilarityFromSearchResultsRmse(bestSearchResultForOtherDataset.getRmse(), similaritySearchRmse);
+                    SimilarityBestSearchResult similarityBestSearchResult = new SimilarityBestSearchResult(targetDataset, similaritySearchRmse, otherDataset, dissimilarity);
+                    session.save(similarityBestSearchResult);
+                }
             }
 
 
@@ -115,16 +124,11 @@ public class SimilarityBestResultSearch {
 
     }
 
-    private static double performNewSearchWithGivenHyperparametersForDataset(Dataset dataset, SearchResult template, String dataFolder) {
-        if (dataFolder.endsWith("/") || dataFolder.endsWith("\\")) {
-            dataFolder += dataset.getDatasetName();
-        } else {
-            dataFolder += "/" + dataset.getDatasetName();
-        }
+    private static double performNewSearchWithGivenHyperparametersForData(SearchResult template, String filePath) {
         double rmse = ERROR_READING_DATA_FILE;
 
         try {
-            File dataFile = new File(dataFolder);
+            File dataFile = new File(filePath);
             BufferedReader reader = new BufferedReader(
                     new FileReader(dataFile));
             Instances dataInstances = new Instances(reader);
@@ -179,6 +183,22 @@ public class SimilarityBestResultSearch {
             e.printStackTrace();
             return ERROR_READING_DATA_FILE;
         }
+    }
 
+    private static String getDatasetNameFromDataFile(String filePath){
+        try {
+            File dataFile = new File(filePath);
+            BufferedReader reader = new BufferedReader(
+                    new FileReader(dataFile));
+            Instances dataInstances = new Instances(reader);
+            reader.close();
+            // setting class attribute
+            return dataInstances.relationName();
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
