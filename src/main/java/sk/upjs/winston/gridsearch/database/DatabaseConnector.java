@@ -159,6 +159,31 @@ public class DatabaseConnector {
         return svmSearchResult;
     }
 
+    public SearchResult worstSearchResultForDataset(Dataset dataset) {
+        SearchResult knnSearchResult = (KnnSearchResult) session.createQuery("FROM KnnSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse desc").setMaxResults(1).uniqueResult();
+        SearchResult logisticRegressionSearchResult = (LogisticRegressionSearchResult) session.createQuery("FROM LogisticRegressionSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse desc").setMaxResults(1).uniqueResult();
+        SearchResult decisionTreeSearchResult = (DecisionTreeSearchResult) session.createQuery("FROM DecisionTreeSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse desc").setMaxResults(1).uniqueResult();
+        SearchResult svmSearchResult = (SvmSearchResult) session.createQuery("FROM SvmSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse desc").setMaxResults(1).uniqueResult();
+
+        if (knnSearchResult != null &&
+                (logisticRegressionSearchResult == null || knnSearchResult.getRmse() <= logisticRegressionSearchResult.getRmse()) &&
+                (decisionTreeSearchResult == null || knnSearchResult.getRmse() <= decisionTreeSearchResult.getRmse()) &&
+                (svmSearchResult == null || knnSearchResult.getRmse() <= svmSearchResult.getRmse())) {
+            return knnSearchResult;
+        } else if (decisionTreeSearchResult != null &&
+                (knnSearchResult == null || decisionTreeSearchResult.getRmse() <= knnSearchResult.getRmse()) &&
+                (logisticRegressionSearchResult == null || decisionTreeSearchResult.getRmse() <= logisticRegressionSearchResult.getRmse()) &&
+                (svmSearchResult == null || decisionTreeSearchResult.getRmse() <= svmSearchResult.getRmse())) {
+            return decisionTreeSearchResult;
+        } else if (logisticRegressionSearchResult != null &&
+                (knnSearchResult == null || logisticRegressionSearchResult.getRmse() <= knnSearchResult.getRmse()) &&
+                (decisionTreeSearchResult == null || logisticRegressionSearchResult.getRmse() <= decisionTreeSearchResult.getRmse()) &&
+                (svmSearchResult == null || logisticRegressionSearchResult.getRmse() <= svmSearchResult.getRmse())) {
+            return decisionTreeSearchResult;
+        }
+        return svmSearchResult;
+    }
+
     public Dataset getDatasetByName(String datasetName) {
         Dataset dataset = (Dataset) session.createQuery("FROM Dataset Where datasetName='" + datasetName + "'").uniqueResult();
         return dataset;
