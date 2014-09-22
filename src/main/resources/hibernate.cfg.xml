@@ -13,8 +13,8 @@
 
         <!-- stefan_bocko is the database name -->
         <property name="hibernate.connection.url">
-            <!--jdbc:mysql://localhost/stefan_bocko-->
-            jdbc:mysql://master.exp.upjs.sk/stefan_bocko
+            jdbc:mysql://localhost/stefan_bocko
+            <!--jdbc:mysql://master.exp.upjs.sk/stefan_bocko-->
         </property>
         <property name="hibernate.connection.username">
             stefan_bocko
@@ -31,12 +31,18 @@
         <!--<mapping resource="Svm.hbm.xml"/>-->
 
         <!-- List of XML mapping files for random search-->
-        <mapping resource="DatasetRand.hbm.xml"/>
-        <mapping resource="KnnRand.hbm.xml"/>
-        <mapping resource="DecisionTreeRand.hbm.xml"/>
-        <mapping resource="LogisticRegressionRand.hbm.xml"/>
-        <mapping resource="SvmRand.hbm.xml"/>
-        <mapping resource="SimilarityBestRand.hbm.xml"/>
+        <!--<mapping resource="DatasetRand.hbm.xml"/>-->
+        <!--<mapping resource="KnnRand.hbm.xml"/>-->
+        <!--<mapping resource="DecisionTreeRand.hbm.xml"/>-->
+        <!--<mapping resource="LogisticRegressionRand.hbm.xml"/>-->
+        <!--<mapping resource="SvmRand.hbm.xml"/>-->
+        <!--<mapping resource="SimilarityBestRand.hbm.xml"/>-->
 
+        <!-- List of XML mapping files for second grid search analysis-->
+        <mapping resource="DatasetGs.hbm.xml"/>
+        <mapping resource="KnnGs.hbm.xml"/>
+        <mapping resource="DecisionTreeGs.hbm.xml"/>
+        <mapping resource="LogisticRegressionGs.hbm.xml"/>
+        <mapping resource="SvmGs.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

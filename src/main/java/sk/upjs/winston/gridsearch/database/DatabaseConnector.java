@@ -115,7 +115,6 @@ public class DatabaseConnector {
         SearchResult knnSearchResult = (KnnSearchResult) session.createQuery("FROM KnnSearchResult Where rmse in (Select min(knn.rmse) FROM KnnSearchResult knn)").list().get(0);
         SearchResult logisticRegressionSearchResult = (LogisticRegressionSearchResult) session.createQuery("FROM LogisticRegressionSearchResult Where rmse in (Select min(logReg.rmse) FROM LogisticRegressionSearchResult logReg)").list().get(0);
         SearchResult decisionTreeSearchResult = (DecisionTreeSearchResult) session.createQuery("FROM DecisionTreeSearchResult Where rmse in (Select min(decTree.rmse) FROM DecisionTreeSearchResult decTree)").list().get(0);
-
 //        if (knnSearchResult.getRmse() <= logisticRegressionSearchResult.getRmse()) {
 //            return knnSearchResult;
 //        }

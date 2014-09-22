@@ -97,4 +97,6 @@ select dataset_id, count(*) from decision_tree kn where kn.dataset_id in (select
 
 select min_number_of_instances_per_leaf parameter, sum(rmse) suma from decision_tree group by parameter order by suma;
 
-select count(*) from decision_tree where rmse > 0;
+select count(*) from decision_tree;
+
+select * from decision_tree where rmse=0;

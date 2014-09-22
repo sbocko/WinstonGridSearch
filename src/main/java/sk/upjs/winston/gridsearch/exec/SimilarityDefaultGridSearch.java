@@ -33,6 +33,7 @@ public class SimilarityDefaultGridSearch {
             System.out.format("\n%32s%32s%32s%32s%32s%15s%15s\n\n", "Dataset", "Most similar dataset", "Dissimilarity", "Best rmse", "Similarity search rmse", "Position", "<= default");
 
             List<Dataset> datasets = databaseConnector.getApplicableDatasetsForDefaultGridSimilaritySearch();
+//            System.out.println(datasets);
             for (int i = 0; i < datasets.size(); i++) {
                 Dataset targetDataset = datasets.get(i);
                 double minDissimilarity = Double.MAX_VALUE;
