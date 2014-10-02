@@ -13,8 +13,8 @@
 
         <!-- stefan_bocko is the database name -->
         <property name="hibernate.connection.url">
-            jdbc:mysql://localhost/stefan_bocko
-            <!--jdbc:mysql://master.exp.upjs.sk/stefan_bocko-->
+            <!--jdbc:mysql://localhost/stefan_bocko-->
+            jdbc:mysql://master.exp.upjs.sk/stefan_bocko
         </property>
         <property name="hibernate.connection.username">
             stefan_bocko
@@ -44,5 +44,6 @@
         <mapping resource="DecisionTreeGs.hbm.xml"/>
         <mapping resource="LogisticRegressionGs.hbm.xml"/>
         <mapping resource="SvmGs.hbm.xml"/>
+        <mapping resource="ComputationTimesGs.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

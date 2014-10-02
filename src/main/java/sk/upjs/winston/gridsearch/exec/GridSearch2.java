@@ -8,6 +8,7 @@ import sk.upjs.winston.gridsearch.algorithms.DecisionTreeModel;
 import sk.upjs.winston.gridsearch.algorithms.KnnModel;
 import sk.upjs.winston.gridsearch.algorithms.LogisticRegressionModel;
 import sk.upjs.winston.gridsearch.algorithms.SvmModel;
+import sk.upjs.winston.gridsearch.model.ComputationTimeForResult;
 import sk.upjs.winston.gridsearch.model.Dataset;
 import sk.upjs.winston.gridsearch.model.SearchResult;
 import sk.upjs.winston.gridsearch.model.SvmSearchResult;
@@ -20,17 +21,18 @@ import weka.core.Instances;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GridSearch {
+public class GridSearch2 {
     private static final Logger logger = Logger.getLogger(RandomSearch.class.getName());
     private static final double VERSION = 0.1;
 
     private static SessionFactory factory;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException{
         if (args.length != 1) {
             System.out.println(getHelp());
             return;
@@ -38,6 +40,27 @@ public class GridSearch {
 
         String filePath = args[0];
 //        String filePath = "./other/iris.arff";
+//        args = new String[1];
+//        args[0] = "iris.arff";
+
+//        File df = new File(filePath);
+//        BufferedReader r = new BufferedReader(
+//                new FileReader(df));
+//        Instances di = new Instances(r);
+//        r.close();
+//        // setting class attribute
+//        di.setClassIndex(di.numAttributes() - 1);
+//
+//        for (int i = 0; i < 10; i++) {
+//            KnnModel kn = new KnnModel();
+//            double res = kn.knn(di, 3);
+//            System.out.println(res);
+//        }
+//
+//        if(true){
+//            return;
+//        }
+
 
         // create session factory
         try {
@@ -81,6 +104,7 @@ public class GridSearch {
 
         //KNN SESSION
         session = factory.openSession();
+        long startTime = System.currentTimeMillis();
         tx = null;
         try {
             tx = session.beginTransaction();
@@ -100,6 +124,11 @@ public class GridSearch {
             saveSearchResults(session, results);
 
             logger.log(Level.FINE, "Dataset " + args[0] + " processed knn.");
+
+            int time = (int) (System.currentTimeMillis() - startTime);
+            ComputationTimeForResult computationTime = new ComputationTimeForResult(dataset, "knn", time);
+            session.save(computationTime);
+
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
@@ -112,6 +141,7 @@ public class GridSearch {
         //DECISION TREE SESSION
 
         session = factory.openSession();
+        startTime = System.currentTimeMillis();
         tx = null;
         try {
             tx = session.beginTransaction();
@@ -130,6 +160,11 @@ public class GridSearch {
             Set<SearchResult> results = decisionTree.j48Search(dataset, dataInstances);
             saveSearchResults(session, results);
 
+
+            int time = (int) (System.currentTimeMillis() - startTime);
+            ComputationTimeForResult computationTime = new ComputationTimeForResult(dataset, "decision_tree", time);
+            session.save(computationTime);
+
             logger.log(Level.FINE, "Dataset " + args[0] + " processed decision tree.");
             tx.commit();
         } catch (Exception e) {
@@ -143,6 +178,7 @@ public class GridSearch {
         //LOGISTIC REGRESSION SESSION
 
         session = factory.openSession();
+        startTime = System.currentTimeMillis();
         tx = null;
         try {
             tx = session.beginTransaction();
@@ -161,6 +197,10 @@ public class GridSearch {
             Set<SearchResult> results = logisticRegressionModel.logisticRegressionSearch(dataset, dataInstances);
             saveSearchResults(session, results);
 
+            int time = (int) (System.currentTimeMillis() - startTime);
+            ComputationTimeForResult computationTime = new ComputationTimeForResult(dataset, "logistic_regression", time);
+            session.save(computationTime);
+
             logger.log(Level.FINE, "Dataset " + args[0] + " processed logistic regression.");
             tx.commit();
         } catch (Exception e) {
@@ -171,7 +211,8 @@ public class GridSearch {
             session.close();
         }
 
-        //SVM SESSION
+//        //SVM SESSION
+        startTime = System.currentTimeMillis();
         for (double c = SvmModel.MIN_C; c <= SvmModel.MAX_C; c += SvmModel.STEP_C) {
             for (double p = SvmModel.MIN_P; p <= SvmModel.MAX_P; p += SvmModel.STEP_P) {
                 session = factory.openSession();
@@ -225,6 +266,23 @@ public class GridSearch {
                 }
             }
         }
+
+        session = factory.openSession();
+        tx = null;
+        try {
+            tx = session.beginTransaction();
+            Dataset dataset = (Dataset) session.createQuery("FROM Dataset WHERE id=" + datasetId).uniqueResult();
+            int time = (int) (System.currentTimeMillis() - startTime);
+            ComputationTimeForResult computationTime = new ComputationTimeForResult(dataset, "svm", time);
+            session.save(computationTime);
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            logger.log(Level.FINE, "Error for dataset  " + args[0] + " : " + e.getMessage());
+        } finally {
+            session.close();
+        }
+
         logger.log(Level.FINE, "Dataset " + args[0] + " processed successfully.");
     }
 

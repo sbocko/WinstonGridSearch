@@ -34,6 +34,7 @@ public class KnnModel extends Model {
         try {
             evaluation = new Evaluation(dataInstances);
             evaluation.crossValidateModel(ibk, dataInstances, 10, new Random(1));
+
         } catch (Exception e) {
 //            e.printStackTrace();
             return ERROR_DURING_CLASSIFICATION;
