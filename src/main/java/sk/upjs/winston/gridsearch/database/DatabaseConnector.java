@@ -15,11 +15,51 @@ public class DatabaseConnector {
     private static final int DEFAULT_DECISION_TREE_PARAMETER_MIN_NUMBER_OF_INSTANCES = 2;
     private static final boolean DEFAULT_DECISION_TREE_PARAMETER_UNPRUNED = false;
     private static final double DEFAULT_LOGISTIC_REGRESSION_PARAMETER_RIDGE = 0.05;
+    private static final double DEFAULT_SVM_PARAMETER_P_EPSILON_ERR = 1.0e-12;
+    private static final double DEFAULT_SVM_PARAMETER_C_COMPLEXITY_CONSTANT = 1.0000000000000002;
+    private static final String DEFAULT_SVM_PARAMETER_KERNEL = "PolyKernel";
+
 
     private Session session;
 
     public DatabaseConnector(Session session) {
         this.session = session;
+    }
+
+    public int totalComputationTimeForDataset(Dataset dataset) {
+        int result = 0;
+        List<Integer> list = session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId()).list();
+        for (Integer time : list) {
+            result += time;
+        }
+        return result;
+    }
+
+    public int totalKnnComputationTimeForDataset(Dataset dataset) {
+        int result = 0;
+        result = ((Integer)session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='knn'").uniqueResult()).intValue();
+        return result;
+    }
+
+    public int totalDecisionTreeComputationTimeForDataset(Dataset dataset) {
+        int result = 0;
+        result = ((Integer)session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='decision_tree'").uniqueResult()).intValue();
+        return result;
+    }
+
+    public int totalLogisticRegressionComputationTimeForDataset(Dataset dataset) {
+        int result = 0;
+        result = ((Integer)session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='logistic_regression'").uniqueResult()).intValue();
+        return result;
+    }
+
+    public int totalSvmComputationTimeForDataset(Dataset dataset) {
+        Integer result = 0;
+        result = (Integer) session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='svm'").uniqueResult();
+        if(result == null){
+            return -1;
+        }
+        return result;
     }
 
     public SearchResult similaritySearchForDatasetWithoutSVM(Dataset dataset, SearchResult template) {
@@ -87,8 +127,58 @@ public class DatabaseConnector {
         return dissimilarity;
     }
 
-    public double datasetDissimilarityFromSearchResultsRmse(double rmse1, double rmse2){
-        return Math.abs(rmse1-rmse2);
+    /**
+     * Computes weighted dissmilarity of two datasets based on default knn, decision tree and logistic regression hyperparameters rmse.
+     *
+     * @param dataset1 first dataset
+     * @param dataset2 second dataset
+     * @param knnWeight weight for knn
+     * @param decTreeWeight weight for decision tree
+     * @param logRegWeight weight for decision tree
+     * @return
+     */
+    public double weightedDatasetDissimilarityFromDefaultHyperparametersWithoutSVM(Dataset dataset1, Dataset dataset2, double knnWeight, double decTreeWeight, double logRegWeight) {
+        double dissimilarity = 0;
+        dissimilarity = dissimilarity + (knnWeight*(Math.abs(defaultKnnSearchResultForDataset(dataset1).getRmse() -
+                defaultKnnSearchResultForDataset(dataset2).getRmse())));
+        dissimilarity = dissimilarity + (decTreeWeight*(Math.abs(defaultDecisionTreeSearchResultForDataset(dataset1).getRmse() -
+                defaultDecisionTreeSearchResultForDataset(dataset2).getRmse())));
+        dissimilarity = dissimilarity + (logRegWeight*(Math.abs(defaultLogisticRegressionSearchResultForDataset(dataset1).getRmse() -
+                defaultLogisticRegressionSearchResultForDataset(dataset2).getRmse())));
+
+        return dissimilarity;
+    }
+
+    public double datasetDissimilarityFromKnnDefaultHyperparameters(Dataset dataset1, Dataset dataset2) {
+        double dissimilarity = 0;
+        dissimilarity += Math.abs(defaultKnnSearchResultForDataset(dataset1).getRmse() -
+                defaultKnnSearchResultForDataset(dataset2).getRmse());
+        return dissimilarity;
+    }
+
+    public double datasetDissimilarityFromDecisionTreeDefaultHyperparameters(Dataset dataset1, Dataset dataset2) {
+        double dissimilarity = 0;
+        dissimilarity += Math.abs(defaultDecisionTreeSearchResultForDataset(dataset1).getRmse() -
+                defaultDecisionTreeSearchResultForDataset(dataset2).getRmse());
+        return dissimilarity;
+    }
+
+    public double datasetDissimilarityFromLogisticRegressionDefaultHyperparameters(Dataset dataset1, Dataset dataset2) {
+        double dissimilarity = 0;
+        dissimilarity += Math.abs(defaultLogisticRegressionSearchResultForDataset(dataset1).getRmse() -
+                defaultLogisticRegressionSearchResultForDataset(dataset2).getRmse());
+        return dissimilarity;
+    }
+
+    public double datasetDissimilarityFromSvmDefaultHyperparameters(Dataset dataset1, Dataset dataset2) {
+        double dissimilarity = 0;
+        dissimilarity += Math.abs(defaultSvmSearchResultForDataset(dataset1).getRmse() -
+                defaultSvmSearchResultForDataset(dataset2).getRmse());
+        return dissimilarity;
+    }
+
+    public double datasetDissimilarityFromSearchResultsRmse(double rmse1, double rmse2) {
+        return Math.abs(rmse1 - rmse2);
     }
 
     public SearchResult defaultKnnSearchResultForDataset(Dataset dataset) {
@@ -111,10 +201,39 @@ public class DatabaseConnector {
         return result;
     }
 
+    public SearchResult defaultSvmSearchResultForDataset(Dataset dataset) {
+        SearchResult result = (SvmSearchResult) session.createQuery("FROM SvmSearchResult Where dataset_id=" +
+                dataset.getId() + " and kernel='" + DEFAULT_SVM_PARAMETER_KERNEL + "' and complexityConstant=" +
+                DEFAULT_SVM_PARAMETER_C_COMPLEXITY_CONSTANT + " and epsilonRoundOffError=" +
+                DEFAULT_SVM_PARAMETER_P_EPSILON_ERR).uniqueResult();
+        return result;
+    }
+
+    public SearchResult bestKnnSearchResultForDataset(Dataset dataset) {
+        SearchResult knnSearchResult = (KnnSearchResult) session.createQuery("FROM KnnSearchResult Where dataset_id=" + dataset.getId() + " order by rmse asc").list().get(0);
+        return knnSearchResult;
+    }
+
+    public SearchResult bestDecisionTreeSearchResultForDataset(Dataset dataset) {
+        SearchResult decisionTreeSearchResult = (DecisionTreeSearchResult) session.createQuery("FROM DecisionTreeSearchResult Where dataset_id=" + dataset.getId() + " order by rmse asc").list().get(0);
+        return decisionTreeSearchResult;
+    }
+
+    public SearchResult bestLogisticRegressionSearchResultForDataset(Dataset dataset) {
+        SearchResult logisticRegressionSearchResult = (LogisticRegressionSearchResult) session.createQuery("FROM LogisticRegressionSearchResult Where dataset_id=" + dataset.getId() + " order by rmse asc").list().get(0);
+        return logisticRegressionSearchResult;
+    }
+
+    public SearchResult bestSvmSearchResultForDataset(Dataset dataset) {
+        SearchResult svmSearchResult = (SvmSearchResult) session.createQuery("FROM SvmSearchResult result Where result.dataset.id=" + dataset.getId() + " order by result.rmse asc").setMaxResults(1).uniqueResult();
+        return svmSearchResult;
+    }
+
     public SearchResult bestSearchResultForDatasetWithoutSVM(Dataset dataset) {
-        SearchResult knnSearchResult = (KnnSearchResult) session.createQuery("FROM KnnSearchResult Where rmse in (Select min(knn.rmse) FROM KnnSearchResult knn)").list().get(0);
-        SearchResult logisticRegressionSearchResult = (LogisticRegressionSearchResult) session.createQuery("FROM LogisticRegressionSearchResult Where rmse in (Select min(logReg.rmse) FROM LogisticRegressionSearchResult logReg)").list().get(0);
-        SearchResult decisionTreeSearchResult = (DecisionTreeSearchResult) session.createQuery("FROM DecisionTreeSearchResult Where rmse in (Select min(decTree.rmse) FROM DecisionTreeSearchResult decTree)").list().get(0);
+        SearchResult knnSearchResult = (KnnSearchResult) bestKnnSearchResultForDataset(dataset);
+        SearchResult logisticRegressionSearchResult = (LogisticRegressionSearchResult) bestLogisticRegressionSearchResultForDataset(dataset);
+        SearchResult decisionTreeSearchResult = (DecisionTreeSearchResult) bestDecisionTreeSearchResultForDataset(dataset);
+
 //        if (knnSearchResult.getRmse() <= logisticRegressionSearchResult.getRmse()) {
 //            return knnSearchResult;
 //        }
@@ -134,10 +253,10 @@ public class DatabaseConnector {
     }
 
     public SearchResult bestSearchResultForDataset(Dataset dataset) {
-        SearchResult knnSearchResult = (KnnSearchResult) session.createQuery("FROM KnnSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse").setMaxResults(1).uniqueResult();
-        SearchResult logisticRegressionSearchResult = (LogisticRegressionSearchResult) session.createQuery("FROM LogisticRegressionSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse").setMaxResults(1).uniqueResult();
-        SearchResult decisionTreeSearchResult = (DecisionTreeSearchResult) session.createQuery("FROM DecisionTreeSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse").setMaxResults(1).uniqueResult();
-        SearchResult svmSearchResult = (SvmSearchResult) session.createQuery("FROM SvmSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse").setMaxResults(1).uniqueResult();
+        SearchResult knnSearchResult = (KnnSearchResult) bestKnnSearchResultForDataset(dataset);
+        SearchResult logisticRegressionSearchResult = (LogisticRegressionSearchResult) bestLogisticRegressionSearchResultForDataset(dataset);
+        SearchResult decisionTreeSearchResult = (DecisionTreeSearchResult) bestDecisionTreeSearchResultForDataset(dataset);
+        SearchResult svmSearchResult = (SvmSearchResult) bestSvmSearchResultForDataset(dataset);
 
         if (knnSearchResult != null &&
                 (logisticRegressionSearchResult == null || knnSearchResult.getRmse() <= logisticRegressionSearchResult.getRmse()) &&
@@ -159,10 +278,10 @@ public class DatabaseConnector {
     }
 
     public SearchResult worstSearchResultForDataset(Dataset dataset) {
-        SearchResult knnSearchResult = (KnnSearchResult) session.createQuery("FROM KnnSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse desc").setMaxResults(1).uniqueResult();
-        SearchResult logisticRegressionSearchResult = (LogisticRegressionSearchResult) session.createQuery("FROM LogisticRegressionSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse desc").setMaxResults(1).uniqueResult();
-        SearchResult decisionTreeSearchResult = (DecisionTreeSearchResult) session.createQuery("FROM DecisionTreeSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse desc").setMaxResults(1).uniqueResult();
-        SearchResult svmSearchResult = (SvmSearchResult) session.createQuery("FROM SvmSearchResult result Where result.dataset.id="+dataset.getId()+" order by result.rmse desc").setMaxResults(1).uniqueResult();
+        SearchResult knnSearchResult = (KnnSearchResult) session.createQuery("FROM KnnSearchResult result Where result.dataset.id=" + dataset.getId() + " order by result.rmse desc").setMaxResults(1).uniqueResult();
+        SearchResult logisticRegressionSearchResult = (LogisticRegressionSearchResult) session.createQuery("FROM LogisticRegressionSearchResult result Where result.dataset.id=" + dataset.getId() + " order by result.rmse desc").setMaxResults(1).uniqueResult();
+        SearchResult decisionTreeSearchResult = (DecisionTreeSearchResult) session.createQuery("FROM DecisionTreeSearchResult result Where result.dataset.id=" + dataset.getId() + " order by result.rmse desc").setMaxResults(1).uniqueResult();
+        SearchResult svmSearchResult = (SvmSearchResult) session.createQuery("FROM SvmSearchResult result Where result.dataset.id=" + dataset.getId() + " order by result.rmse desc").setMaxResults(1).uniqueResult();
 
         if (knnSearchResult != null &&
                 (logisticRegressionSearchResult == null || knnSearchResult.getRmse() <= logisticRegressionSearchResult.getRmse()) &&
@@ -209,6 +328,31 @@ public class DatabaseConnector {
         return knnDefaultList;
     }
 
+    public List<Dataset> getApplicableDatasetsForKnnDefaultGridSimilaritySearch() {
+        List<Dataset> knnDefaultList = (ArrayList<Dataset>) session.createQuery("SELECT dataset FROM KnnSearchResult Where k=" + DEFAULT_KNN_PARAMETER_K).list();
+        return knnDefaultList;
+    }
+
+    public List<Dataset> getApplicableDatasetsForDecisionTreeDefaultGridSimilaritySearch() {
+        List<Dataset> decisionTreeDefaultList = (ArrayList<Dataset>) session.createQuery("SELECT dataset FROM DecisionTreeSearchResult " +
+                "Where confidence_factor=" + DEFAULT_DECISION_TREE_PARAMETER_PRUNING + " and min_number_of_instances_per_leaf=" +
+                DEFAULT_DECISION_TREE_PARAMETER_MIN_NUMBER_OF_INSTANCES + " and unpruned=" + DEFAULT_DECISION_TREE_PARAMETER_UNPRUNED).list();
+        return decisionTreeDefaultList;
+    }
+
+    public List<Dataset> getApplicableDatasetsForLogisticRegressionDefaultGridSimilaritySearch() {
+        List<Dataset> logisticRegressionDefaultList = (ArrayList<Dataset>) session.createQuery("SELECT dataset FROM LogisticRegressionSearchResult Where ridge="
+                + DEFAULT_LOGISTIC_REGRESSION_PARAMETER_RIDGE).list();
+        return logisticRegressionDefaultList;
+    }
+
+    public List<Dataset> getApplicableDatasetsForSvmDefaultGridSimilaritySearch() {
+        List<Dataset> svmDefaultList = (ArrayList<Dataset>) session.createQuery("SELECT dataset FROM SvmSearchResult Where kernel='"
+                + DEFAULT_SVM_PARAMETER_KERNEL + "' and complexity_constant=" + DEFAULT_SVM_PARAMETER_C_COMPLEXITY_CONSTANT +
+                " and epsilon_err=" + DEFAULT_SVM_PARAMETER_P_EPSILON_ERR).list();
+        return svmDefaultList;
+    }
+
     public int totalNumberOfSearchResultsForDataset(Dataset dataset) {
         int result = 0;
         result += ((Long) session.createQuery("SELECT count(*) FROM KnnSearchResult Where dataset_id=" +
@@ -246,6 +390,34 @@ public class DatabaseConnector {
         return result;
     }
 
+    public int totalNumberOfKnnSearchResultsForDataset(Dataset dataset) {
+        int result = 0;
+        result += ((Long) session.createQuery("SELECT count(*) FROM KnnSearchResult Where dataset_id=" +
+                dataset.getId()).iterate().next()).intValue();
+        return result;
+    }
+
+    public int totalNumberOfDecisionTreeSearchResultsForDataset(Dataset dataset) {
+        int result = 0;
+        result += ((Long) session.createQuery("SELECT count(*) FROM DecisionTreeSearchResult Where dataset_id=" +
+                dataset.getId()).iterate().next()).intValue();
+        return result;
+    }
+
+    public int totalNumberOfLogisticRegressionSearchResultsForDataset(Dataset dataset) {
+        int result = 0;
+        result += ((Long) session.createQuery("SELECT count(*) FROM LogisticRegressionSearchResult Where dataset_id=" +
+                dataset.getId()).iterate().next()).intValue();
+        return result;
+    }
+
+    public int totalNumberOfSvmSearchResultsForDataset(Dataset dataset) {
+        int result = 0;
+        result += ((Long) session.createQuery("SELECT count(*) FROM SvmSearchResult Where dataset_id=" +
+                dataset.getId()).iterate().next()).intValue();
+        return result;
+    }
+
     public int numberOfBetterSearchResultsForDatasetWithoutSVM(Dataset dataset, double rmseLimit) {
         int result = 0;
         result += ((Long) session.createQuery("SELECT count(*) FROM KnnSearchResult Where dataset_id=" +
@@ -253,6 +425,34 @@ public class DatabaseConnector {
         result += ((Long) session.createQuery("SELECT count(*) FROM LogisticRegressionSearchResult Where dataset_id=" +
                 dataset.getId() + " and rmse<" + rmseLimit).iterate().next()).intValue();
         result += ((Long) session.createQuery("SELECT count(*) FROM DecisionTreeSearchResult Where dataset_id=" +
+                dataset.getId() + " and rmse<" + rmseLimit).iterate().next()).intValue();
+        return result;
+    }
+
+    public int numberOfBetterKnnSearchResultsForDataset(Dataset dataset, double rmseLimit) {
+        int result = 0;
+        result += ((Long) session.createQuery("SELECT count(*) FROM KnnSearchResult Where dataset_id=" +
+                dataset.getId() + " and rmse<" + rmseLimit).iterate().next()).intValue();
+        return result;
+    }
+
+    public int numberOfBetterDecisionTreeSearchResultsForDataset(Dataset dataset, double rmseLimit) {
+        int result = 0;
+        result += ((Long) session.createQuery("SELECT count(*) FROM DecisionTreeSearchResult Where dataset_id=" +
+                dataset.getId() + " and rmse<" + rmseLimit).iterate().next()).intValue();
+        return result;
+    }
+
+    public int numberOfBetterLogisticRegressionSearchResultsForDataset(Dataset dataset, double rmseLimit) {
+        int result = 0;
+        result += ((Long) session.createQuery("SELECT count(*) FROM LogisticRegressionSearchResult Where dataset_id=" +
+                dataset.getId() + " and rmse<" + rmseLimit).iterate().next()).intValue();
+        return result;
+    }
+
+    public int numberOfBetterSvmSearchResultsForDataset(Dataset dataset, double rmseLimit) {
+        int result = 0;
+        result += ((Long) session.createQuery("SELECT count(*) FROM SvmSearchResult Where dataset_id=" +
                 dataset.getId() + " and rmse<" + rmseLimit).iterate().next()).intValue();
         return result;
     }

@@ -30,10 +30,10 @@ public class SimilarityDefaultGridSearch {
             tx = session.beginTransaction();
             DatabaseConnector databaseConnector = new DatabaseConnector(session);
 
-            System.out.format("\n%32s%32s%32s%32s%32s%15s%15s\n\n", "Dataset", "Most similar dataset", "Dissimilarity", "Best rmse", "Similarity search rmse", "Position", "<= default");
+            System.out.format("\n%32s%32s%32s%32s%32s%15s%15s%32s\n\n", "Dataset", "Most similar dataset", "Dissimilarity", "Best rmse", "Similarity search rmse", "Position", "<= default", "grid search time (s)");
 
-            List<Dataset> datasets = databaseConnector.getApplicableDatasetsForDefaultGridSimilaritySearch();
-//            System.out.println(datasets);
+            List<Dataset> datasets = databaseConnector.getApplicableDatasetsForSvmDefaultGridSimilaritySearch();
+
             for (int i = 0; i < datasets.size(); i++) {
                 Dataset targetDataset = datasets.get(i);
                 double minDissimilarity = Double.MAX_VALUE;
@@ -43,7 +43,7 @@ public class SimilarityDefaultGridSearch {
                 for (int j = 0; j < datasets.size(); j++) {
                     if (i != j) {
                         Dataset currentDataset = datasets.get(j);
-                        double currentDissimilarity = databaseConnector.datasetDissimilarityFromDefaultHyperparametersWithoutSVM(targetDataset, currentDataset);
+                        double currentDissimilarity = databaseConnector.datasetDissimilarityFromSvmDefaultHyperparameters(targetDataset, currentDataset);
                         if (currentDissimilarity < minDissimilarity) {
                             minDissimilarity = currentDissimilarity;
                             mostSimilarDataset = currentDataset;
@@ -52,17 +52,18 @@ public class SimilarityDefaultGridSearch {
                 }
 
                 //get best hyperparameter values
-                SearchResult bestSearch = databaseConnector.similaritySearchForDatasetWithoutSVM(targetDataset, databaseConnector.bestSearchResultForDatasetWithoutSVM(mostSimilarDataset));
+                SearchResult bestSearch = databaseConnector.similaritySearchForDataset(targetDataset, databaseConnector.bestSvmSearchResultForDataset(mostSimilarDataset));
+                String position = databaseConnector.numberOfBetterSvmSearchResultsForDataset(targetDataset, bestSearch.getRmse()) + "/" +
+                        databaseConnector.totalNumberOfSvmSearchResultsForDataset(targetDataset);
 
-                String position = databaseConnector.numberOfBetterSearchResultsForDatasetWithoutSVM(targetDataset, bestSearch.getRmse()) + "/" +
-                        databaseConnector.totalNumberOfSearchResultsForDatasetWithoutSVM(targetDataset);
-                double minDefaultRmse = Math.min(databaseConnector.defaultKnnSearchResultForDataset(targetDataset).getRmse(), databaseConnector.defaultLogisticRegressionSearchResultForDataset(targetDataset).getRmse());
-                minDefaultRmse = Math.min(minDefaultRmse, databaseConnector.defaultDecisionTreeSearchResultForDataset(targetDataset).getRmse());
+                double minDefaultRmse = databaseConnector.defaultSvmSearchResultForDataset(targetDataset).getRmse();
+//                double minDefaultRmse = Math.min(databaseConnector.defaultKnnSearchResultForDataset(targetDataset).getRmse(), databaseConnector.defaultLogisticRegressionSearchResultForDataset(targetDataset).getRmse());
+//                minDefaultRmse = Math.min(minDefaultRmse, databaseConnector.defaultDecisionTreeSearchResultForDataset(targetDataset).getRmse());
+                double timeSaved = databaseConnector.totalSvmComputationTimeForDataset(targetDataset) / 1000d;
 
-                System.out.format("%32s%32s%32.20f%32.20f%32.20f%15s%15s\n", targetDataset.getDatasetName(), mostSimilarDataset.getDatasetName(), minDissimilarity,
-                        databaseConnector.bestSearchResultForDatasetWithoutSVM(targetDataset).getRmse(), bestSearch.getRmse(), position, bestSearch.getRmse() <= minDefaultRmse);
+                System.out.format("%32s%32s%32.20f%32.20f%32.20f%15s%15s%32s\n", targetDataset.getDatasetName(), mostSimilarDataset.getDatasetName(), minDissimilarity,
+                        databaseConnector.bestSvmSearchResultForDataset(targetDataset).getRmse(), bestSearch.getRmse(), position, bestSearch.getRmse() <= minDefaultRmse, timeSaved);
             }
-
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
