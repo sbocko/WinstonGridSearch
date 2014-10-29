@@ -4,6 +4,8 @@ import sk.upjs.winston.gridsearch.model.Dataset;
 import sk.upjs.winston.gridsearch.model.SvmSearchResult;
 
 import java.sql.*;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Manages the database operations through JDBC.
@@ -111,5 +113,56 @@ public class DatabaseManager {
         }
         return result;
     }
+    
+    public boolean saveSvmSearchResultsToDatabase(List<SvmSearchResult>toSave) {
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            //STEP 2: Register JDBC driver
+            Class.forName(JDBC_DRIVER);
 
+            //STEP 3: Open a connection
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+            stmt = conn.createStatement();
+
+            String sql = "INSERT INTO " + TABLE_SVM +
+                    "(dataset_id, rmse, kernel, complexity_constant, epsilon_err) ";
+            for (Iterator iterator = toSave.iterator(); iterator.hasNext();) {
+				SvmSearchResult svmSearchResult = (SvmSearchResult) iterator
+						.next();
+				if (toSave.get(0) == svmSearchResult)
+					sql+= "VALUES";
+				else 
+					sql+= ",";
+				sql+= " (" + svmSearchResult.getDataset().getId() +
+	                    ", " + svmSearchResult.getRmse() + ", '" + svmSearchResult.getKernel() + "', " + svmSearchResult.getComplexityConstant() + ", " + svmSearchResult.getEpsilonRoundOffError() + ")";
+			}
+            		
+//            System.out.println(sql);
+            stmt.executeUpdate(sql);
+        } catch (SQLException se) {
+            //Handle errors for JDBC
+            se.printStackTrace();
+            return false;
+        } catch (Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+            return false;
+        } finally {
+            //finally block used to close resources
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+            }// nothing we can do
+            try {
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+        return true;
+    }
 }
