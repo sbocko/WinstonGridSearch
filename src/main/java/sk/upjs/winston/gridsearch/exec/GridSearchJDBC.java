@@ -49,7 +49,7 @@ public class GridSearchJDBC {
         //save dataset and its ID
         long datasetId = databaseManager.saveDatasetToDatabase(dataset);
         dataset.setId(datasetId);
-
+        ArrayList<SvmSearchResult> svmResultsToPersist = new ArrayList<SvmSearchResult>(4000);
 
         //SVM SESSION
         for (double c = SvmModel.MIN_C; c <= SvmModel.MAX_C; c += SvmModel.STEP_C) {
@@ -61,26 +61,27 @@ public class GridSearchJDBC {
                 rmse = svmModel.svm(dataInstances, new StringKernel(), c, p);
                 if (rmse != SvmModel.ERROR_DURING_CLASSIFICATION) {
                     SvmSearchResult res = new SvmSearchResult(dataset, rmse, SvmSearchResult.KERNEL_STRING_KERNEL, c, p);
-                    databaseManager.saveSvmSearchResultToDatabase(res);
+                    svmResultsToPersist.add(res);
                 }
                 rmse = svmModel.svm(dataInstances, new PolyKernel(), c, p);
                 if (rmse != SvmModel.ERROR_DURING_CLASSIFICATION) {
                     SvmSearchResult res = new SvmSearchResult(dataset, rmse, SvmSearchResult.KERNEL_POLYNOMIAL_KERNEL, c, p);
-                    databaseManager.saveSvmSearchResultToDatabase(res);
+                    svmResultsToPersist.add(res);
                 }
                 rmse = svmModel.svm(dataInstances, new NormalizedPolyKernel(), c, p);
                 if (rmse != SvmModel.ERROR_DURING_CLASSIFICATION) {
                     SvmSearchResult res = new SvmSearchResult(dataset, rmse, SvmSearchResult.KERNEL_NORMALIZED_POLYNOMIAL_KERNEL, c, p);
-                    databaseManager.saveSvmSearchResultToDatabase(res);
+                    svmResultsToPersist.add(res);
                 }
                 rmse = svmModel.svm(dataInstances, new RBFKernel(), c, p);
                 if (rmse != SvmModel.ERROR_DURING_CLASSIFICATION) {
                     SvmSearchResult res = new SvmSearchResult(dataset, rmse, SvmSearchResult.KERNEL_RBF_KERNEL, c, p);
-                    databaseManager.saveSvmSearchResultToDatabase(res);
+                    svmResultsToPersist.add(res);
                 }
                 System.out.println("Processed SVM with c=" + c + ", p=" + p + " and dataset: " + dataset.getDatasetName());
             }
         }
+        databaseManager.saveSvmSearchResultsToDatabase(svmResultsToPersist);
         System.out.println("Dataset " + dataset.getDatasetName() + " processed.");
     }
 
