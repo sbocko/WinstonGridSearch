@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Created by stefan on 10/23/14.
@@ -30,7 +31,7 @@ public class GridSearchJDBC {
             System.out.println(getHelp());
             return;
         }
-
+//
         String filePath = args[0];
 //        String filePath = "./other/sensor_readings_2.arff";
 //        args = new String[1];

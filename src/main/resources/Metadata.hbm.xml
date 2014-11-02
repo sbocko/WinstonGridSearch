@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="sk.upjs.winston.gridsearch.model">
+    <class name="Metadata" table="metadata">
+        <meta attribute="class-description">
+            This class contains dataset metadata details.
+        </meta>
+        <id name="id" column="id">
+            <generator class="native"/>
+        </id>
+        <property name="filename" column="filename" type="string"/>
+        <property name="instances" column="instances" type="int"/>
+        <property name="attributes" column="attributes" type="int"/>
+        <property name="dataType" column="data_type" type="string"/>
+        <property name="missingValues" column="missing_values" type="int"/>
+    </class>
+</hibernate-mapping>

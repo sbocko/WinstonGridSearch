@@ -13,8 +13,8 @@
 
         <!-- stefan_bocko is the database name -->
         <property name="hibernate.connection.url">
-            <!--jdbc:mysql://localhost/stefan_bocko-->
-            jdbc:mysql://master.exp.upjs.sk/stefan_bocko
+            jdbc:mysql://localhost/stefan_bocko
+            <!--jdbc:mysql://master.exp.upjs.sk/stefan_bocko-->
         </property>
         <property name="hibernate.connection.username">
             stefan_bocko
@@ -24,6 +24,7 @@
         </property>
 
         <mapping resource="SimilarityGridSearch.hbm.xml"/>
+        <mapping resource="Metadata.hbm.xml"/>
 
         <!-- List of XML mapping files -->
         <!--<mapping resource="Dataset.hbm.xml"/>-->
