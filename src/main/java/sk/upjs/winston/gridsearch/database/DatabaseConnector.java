@@ -18,8 +18,13 @@ public class DatabaseConnector {
     private static final double DEFAULT_SVM_PARAMETER_P_EPSILON_ERR = 1.0e-12;
     private static final double DEFAULT_SVM_PARAMETER_C_COMPLEXITY_CONSTANT = 1.0000000000000002;
     private static final String DEFAULT_SVM_PARAMETER_KERNEL = "PolyKernel";
-
-
+    private static final double DATA_TYPE_WEIGHT = 1d;
+    private static final double MISSING_VALUES_WEIGHT = 1d;
+    private static final double INSTANCES_WEIGHT = 1d;
+    private static final double ATTRIBUTES_WEIGHT = 1d;
+    private static final double MISSING_VALUES_INTERVAL_SIZE = 41951d;
+    private static final double INSTANCES_INTERVAL_SIZE = 2458276d;
+    private static final double ATTRIBUTES_INTERVAL_SIZE = 1558d;
     private Session session;
 
     public DatabaseConnector(Session session) {
@@ -37,26 +42,26 @@ public class DatabaseConnector {
 
     public int totalKnnComputationTimeForDataset(Dataset dataset) {
         int result = 0;
-        result = ((Integer)session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='knn'").uniqueResult()).intValue();
+        result = ((Integer) session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='knn'").uniqueResult()).intValue();
         return result;
     }
 
     public int totalDecisionTreeComputationTimeForDataset(Dataset dataset) {
         int result = 0;
-        result = ((Integer)session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='decision_tree'").uniqueResult()).intValue();
+        result = ((Integer) session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='decision_tree'").uniqueResult()).intValue();
         return result;
     }
 
     public int totalLogisticRegressionComputationTimeForDataset(Dataset dataset) {
         int result = 0;
-        result = ((Integer)session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='logistic_regression'").uniqueResult()).intValue();
+        result = ((Integer) session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='logistic_regression'").uniqueResult()).intValue();
         return result;
     }
 
     public int totalSvmComputationTimeForDataset(Dataset dataset) {
         Integer result = 0;
         result = (Integer) session.createQuery("SELECT computationLength FROM ComputationTimeForResult Where dataset_id=" + dataset.getId() + " and method='svm'").uniqueResult();
-        if(result == null){
+        if (result == null) {
             return -1;
         }
         return result;
@@ -108,6 +113,22 @@ public class DatabaseConnector {
         return result;
     }
 
+    public double datasetSimilarityByMetadata(Dataset dataset1, Dataset dataset2) {
+        double result = 0;
+        Metadata d1Metadata = (Metadata) session.createQuery("FROM Metadata Where filename='" +
+                dataset1.getDatasetName() + "'").uniqueResult();
+        Metadata d2Metadata = (Metadata) session.createQuery("FROM Metadata Where filename='" +
+                dataset2.getDatasetName() + "'").uniqueResult();
+        if (d1Metadata.getDataType() != d2Metadata.getDataType()) {
+            result = result + 1 * DATA_TYPE_WEIGHT;
+        }
+        result = result + MISSING_VALUES_WEIGHT * ((Math.abs(d1Metadata.getMissingValues() - d2Metadata.getMissingValues())) / MISSING_VALUES_INTERVAL_SIZE);
+        result = result + INSTANCES_WEIGHT * ((Math.abs(d1Metadata.getInstances() - d2Metadata.getInstances())) / INSTANCES_INTERVAL_SIZE);
+        result = result + ATTRIBUTES_WEIGHT * ((Math.abs(d1Metadata.getAttributes() - d2Metadata.getAttributes())) / ATTRIBUTES_INTERVAL_SIZE);
+
+        return result;
+    }
+
     /**
      * Computes the dissmilarity of two datasets based on default knn, decision tree and logistic regression hyperparameters rmse.
      *
@@ -130,20 +151,20 @@ public class DatabaseConnector {
     /**
      * Computes weighted dissmilarity of two datasets based on default knn, decision tree and logistic regression hyperparameters rmse.
      *
-     * @param dataset1 first dataset
-     * @param dataset2 second dataset
-     * @param knnWeight weight for knn
+     * @param dataset1      first dataset
+     * @param dataset2      second dataset
+     * @param knnWeight     weight for knn
      * @param decTreeWeight weight for decision tree
-     * @param logRegWeight weight for decision tree
+     * @param logRegWeight  weight for decision tree
      * @return
      */
     public double weightedDatasetDissimilarityFromDefaultHyperparametersWithoutSVM(Dataset dataset1, Dataset dataset2, double knnWeight, double decTreeWeight, double logRegWeight) {
         double dissimilarity = 0;
-        dissimilarity = dissimilarity + (knnWeight*(Math.abs(defaultKnnSearchResultForDataset(dataset1).getRmse() -
+        dissimilarity = dissimilarity + (knnWeight * (Math.abs(defaultKnnSearchResultForDataset(dataset1).getRmse() -
                 defaultKnnSearchResultForDataset(dataset2).getRmse())));
-        dissimilarity = dissimilarity + (decTreeWeight*(Math.abs(defaultDecisionTreeSearchResultForDataset(dataset1).getRmse() -
+        dissimilarity = dissimilarity + (decTreeWeight * (Math.abs(defaultDecisionTreeSearchResultForDataset(dataset1).getRmse() -
                 defaultDecisionTreeSearchResultForDataset(dataset2).getRmse())));
-        dissimilarity = dissimilarity + (logRegWeight*(Math.abs(defaultLogisticRegressionSearchResultForDataset(dataset1).getRmse() -
+        dissimilarity = dissimilarity + (logRegWeight * (Math.abs(defaultLogisticRegressionSearchResultForDataset(dataset1).getRmse() -
                 defaultLogisticRegressionSearchResultForDataset(dataset2).getRmse())));
 
         return dissimilarity;

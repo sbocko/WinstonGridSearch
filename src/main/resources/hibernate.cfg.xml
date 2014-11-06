@@ -42,12 +42,12 @@
         <!--<mapping resource="SimilarityBestRand.hbm.xml"/>-->
 
         <!-- List of XML mapping files for second grid search analysis-->
-        <!--<mapping resource="DatasetGs.hbm.xml"/>-->
-        <!--<mapping resource="KnnGs.hbm.xml"/>-->
-        <!--<mapping resource="DecisionTreeGs.hbm.xml"/>-->
-        <!--<mapping resource="LogisticRegressionGs.hbm.xml"/>-->
-        <!--<mapping resource="SvmGs.hbm.xml"/>-->
-        <!--<mapping resource="ComputationTimesGs.hbm.xml"/>-->
+        <mapping resource="DatasetGs.hbm.xml"/>
+        <mapping resource="KnnGs.hbm.xml"/>
+        <mapping resource="DecisionTreeGs.hbm.xml"/>
+        <mapping resource="LogisticRegressionGs.hbm.xml"/>
+        <mapping resource="SvmGs.hbm.xml"/>
+        <mapping resource="ComputationTimesGs.hbm.xml"/>
 
         <!-- List of XML mapping files for third grid search analysis-->
         <!--<mapping resource="DatasetGs2.hbm.xml"/>-->
@@ -58,11 +58,11 @@
         <!--<mapping resource="ComputationTimesGs2.hbm.xml"/>-->
 
         <!-- List of XML mapping files for fourth grid search analysis-->
-        <mapping resource="DatasetGs3.hbm.xml"/>
-        <mapping resource="KnnGs3.hbm.xml"/>
-        <mapping resource="DecisionTreeGs3.hbm.xml"/>
-        <mapping resource="LogisticRegressionGs3.hbm.xml"/>
-        <mapping resource="SvmGs3.hbm.xml"/>
-        <mapping resource="ComputationTimesGs3.hbm.xml"/>
+        <!--<mapping resource="DatasetGs3.hbm.xml"/>-->
+        <!--<mapping resource="KnnGs3.hbm.xml"/>-->
+        <!--<mapping resource="DecisionTreeGs3.hbm.xml"/>-->
+        <!--<mapping resource="LogisticRegressionGs3.hbm.xml"/>-->
+        <!--<mapping resource="SvmGs3.hbm.xml"/>-->
+        <!--<mapping resource="ComputationTimesGs3.hbm.xml"/>-->
     </session-factory>
 </hibernate-configuration>
