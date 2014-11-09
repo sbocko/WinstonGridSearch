@@ -42,6 +42,7 @@ public class SvmModel extends Model {
             kernel.buildKernel(dataInstances);
             smo.setKernel(kernel);
             smo.setC(complexityConstant);
+
             smo.setEpsilon(epsilonRoundOffError);
 
             evaluation = new Evaluation(dataInstances);

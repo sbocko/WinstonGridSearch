@@ -19,13 +19,18 @@ public class Binarizer {
     public static final String NUMERIC_ATTRIBUTE_POSITION = "POSITION";
 
     public static void main(String[] args) throws Exception {
-//        if(args.length != 2){
-//            System.out.println("Incorrect input! Usage: java -jar Binarizer.java input_data.arff output_dir");
-//        }
-//        String datasetFile = args[0];
-//        String outputDir = args[1];
-        String datasetFile = "other/car.arff";
-        String outputDir = "other";
+        if(args.length != 2){
+            System.out.println("Incorrect input! Usage: java -jar Binarizer.jar input_data.arff output_dir");
+        }
+        String datasetFile = args[0];
+        String outputDir = args[1];
+//        String outputDir = "other";
+//        String datasetFile = "other/car.arff";
+
+        if(outputDir.endsWith("/")){
+            outputDir = outputDir.substring(0,outputDir.length()-1);
+            System.out.println(outputDir);
+        }
 
         // load input
         Instances input = new Instances(new BufferedReader(new FileReader(datasetFile)));

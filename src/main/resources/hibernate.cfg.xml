@@ -42,12 +42,12 @@
         <!--<mapping resource="SimilarityBestRand.hbm.xml"/>-->
 
         <!-- List of XML mapping files for second grid search analysis-->
-        <mapping resource="DatasetGs.hbm.xml"/>
-        <mapping resource="KnnGs.hbm.xml"/>
-        <mapping resource="DecisionTreeGs.hbm.xml"/>
-        <mapping resource="LogisticRegressionGs.hbm.xml"/>
-        <mapping resource="SvmGs.hbm.xml"/>
-        <mapping resource="ComputationTimesGs.hbm.xml"/>
+        <!--<mapping resource="DatasetGs.hbm.xml"/>-->
+        <!--<mapping resource="KnnGs.hbm.xml"/>-->
+        <!--<mapping resource="DecisionTreeGs.hbm.xml"/>-->
+        <!--<mapping resource="LogisticRegressionGs.hbm.xml"/>-->
+        <!--<mapping resource="SvmGs.hbm.xml"/>-->
+        <!--<mapping resource="ComputationTimesGs.hbm.xml"/>-->
 
         <!-- List of XML mapping files for third grid search analysis-->
         <!--<mapping resource="DatasetGs2.hbm.xml"/>-->
@@ -64,5 +64,11 @@
         <!--<mapping resource="LogisticRegressionGs3.hbm.xml"/>-->
         <!--<mapping resource="SvmGs3.hbm.xml"/>-->
         <!--<mapping resource="ComputationTimesGs3.hbm.xml"/>-->
+
+        <mapping resource="DatasetLibSvm.hbm.xml"/>
+        <mapping resource="KnnLibSvm.hbm.xml"/>
+        <mapping resource="DecisionTreeLibSvm.hbm.xml"/>
+        <mapping resource="LogisticRegressionLibSvm.hbm.xml"/>
+        <mapping resource="SvmLibSvm.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>
